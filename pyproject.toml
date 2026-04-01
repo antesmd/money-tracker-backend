@@ -1,5 +1,5 @@
 [project]
-name = "acsa-term-paper"
+name = "acsa-term-paper-backend"
 version = "0.1.0"
 readme = "README.md"
 requires-python = ">=3.13"
