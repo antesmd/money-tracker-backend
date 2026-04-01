@@ -1,0 +1,20 @@
+[project]
+name = "acsa-term-paper"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aio-pika>=9.5.8",
+    "alembic>=1.17.2",
+    "fastapi>=0.123.5",
+    "psycopg2>=2.9.11 ; sys_platform == 'win32'",
+    "psycopg2-binary>=2.9.11 ; sys_platform == 'darwin' or sys_platform == 'linux'",
+    "sqlalchemy>=2.0.44",
+    "uvicorn>=0.38.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.0",
+    "ruff>=0.14.7",
+]
