@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from src.identity.domain.entities import User
+    from src.modules.identity.domain.entities import User
 
 
 class IUserRepository(ABC):

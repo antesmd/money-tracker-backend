@@ -8,8 +8,8 @@ from fastapi import Cookie
 
 from src.libs.constants.environment.authentication import (
     AUTHENTICATION_JWT_ACCESS_EXPIRATION_SECONDS,
-    AUTHENTICATION_JWT_PRIVATE_KEY,
-    AUTHENTICATION_JWT_PUBLIC_KEY,
+    AUTHENTICATION_JWT_PRIVATE_KEY_PATH,
+    AUTHENTICATION_JWT_PUBLIC_KEY_PATH,
     AUTHENTICATION_JWT_REFRESH_EXPIRATION_SECONDS,
 )
 from src.libs.utils import DateTimeUtils
@@ -49,7 +49,9 @@ class TokenService:
         self,
         payload: TokenPayload,
     ) -> str:
-        expire = DateTimeUtils.utc_now() + timedelta(seconds=self.__access_token_expire_seconds)
+        expire = DateTimeUtils.utc_now(naive=False) + timedelta(
+            seconds=self.__access_token_expire_seconds,
+        )
         return self.__jwt.create_token(
             secret=self.__private_key,
             algorithm=self.__algorithm,
@@ -61,7 +63,9 @@ class TokenService:
         self,
         payload: TokenPayload,
     ) -> str:
-        expire = DateTimeUtils.utc_now() + timedelta(seconds=self.__refresh_token_expire_seconds)
+        expire = DateTimeUtils.utc_now(naive=False) + timedelta(
+            seconds=self.__refresh_token_expire_seconds,
+        )
         return self.__jwt.create_token(
             secret=self.__private_key,
             algorithm=self.__algorithm,
@@ -88,8 +92,8 @@ class TokenService:
 
 def get_token_service() -> TokenService:
     return TokenService(
-        private_key=Path(AUTHENTICATION_JWT_PRIVATE_KEY).read_text(),
-        public_key=Path(AUTHENTICATION_JWT_PUBLIC_KEY).read_text(),
+        private_key=Path(AUTHENTICATION_JWT_PRIVATE_KEY_PATH).read_text(),
+        public_key=Path(AUTHENTICATION_JWT_PUBLIC_KEY_PATH).read_text(),
         algorithm="RS256",
         access_token_expire_seconds=AUTHENTICATION_JWT_ACCESS_EXPIRATION_SECONDS,
         refresh_token_expire_seconds=AUTHENTICATION_JWT_REFRESH_EXPIRATION_SECONDS,

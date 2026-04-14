@@ -4,20 +4,20 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Response, status
 
-from src.identity.application.commands import (
+from src.modules.identity.application.commands import (
     AuthenticateUserCommand,
     CreateUserCommand,
     RefreshTokenCommand,
 )
-from src.identity.application.exceptions import InvalidCredentialsError
-from src.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
-from src.identity.application.use_cases import (
+from src.modules.identity.application.exceptions import InvalidCredentialsError
+from src.modules.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
+from src.modules.identity.application.use_cases import (
     create_user_use_case,
     refresh_token_use_case,
     user_login_use_case,
 )
-from src.identity.infrastructure.dependency_injection.uow import get_identity_uow
-from src.identity.infrastructure.token_service import TokenService, get_token_service
+from src.modules.identity.infrastructure.dependency_injection.uow import get_identity_uow
+from src.modules.identity.infrastructure.token_service import TokenService, get_token_service
 
 from .dto import AuthenticateUserRequest, CreateUserRequest
 

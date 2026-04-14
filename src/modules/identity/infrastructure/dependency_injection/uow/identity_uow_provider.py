@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from src.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
-from src.identity.infrastructure.sqlalchemy.unit_of_work import SqlAlchemyIdentityUnitOfWork
+from src.modules.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
+from src.modules.identity.infrastructure.sqlalchemy.unit_of_work import SqlAlchemyIdentityUnitOfWork
 from src.libs.database import async_session_maker
 
 

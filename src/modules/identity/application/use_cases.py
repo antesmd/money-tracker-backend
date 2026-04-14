@@ -2,21 +2,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from src.identity.application.handlers import (
+from src.modules.identity.application.handlers import (
     handle_authenticate_user,
     handle_create_user,
     handle_refresh_token,
 )
 
 if TYPE_CHECKING:
-    from src.identity.application.commands import (
+    from src.modules.identity.application.commands import (
         AuthenticateUserCommand,
         CreateUserCommand,
         RefreshTokenCommand,
     )
-    from src.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
-    from src.identity.domain.entities import User
-    from src.identity.infrastructure.token_service import TokenService
+    from src.modules.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
+    from src.modules.identity.domain.entities import User
+    from src.modules.identity.infrastructure.token_service import TokenService
 
 
 async def create_user_use_case(

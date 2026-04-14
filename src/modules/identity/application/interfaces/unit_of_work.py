@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Self
 if TYPE_CHECKING:
     from types import TracebackType
 
-    from src.identity.application.interfaces.repositories import IUserRepository
+    from src.modules.identity.application.interfaces.repositories import IUserRepository
 
 
 class IIdentityUnitOfWork(AbstractAsyncContextManager["IIdentityUnitOfWork"], ABC):

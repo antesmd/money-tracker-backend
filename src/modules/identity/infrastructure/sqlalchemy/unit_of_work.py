@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Self, final
 
-from src.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
-from src.identity.infrastructure.sqlalchemy.repository import SqlAlchemyUserRepository
+from src.modules.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
+from src.modules.identity.infrastructure.sqlalchemy.repository import SqlAlchemyUserRepository
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
+@final
 class SqlAlchemyIdentityUnitOfWork(IIdentityUnitOfWork):
     _users: SqlAlchemyUserRepository
 

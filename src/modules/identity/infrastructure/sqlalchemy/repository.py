@@ -1,17 +1,18 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, final
 
 from sqlalchemy import select
 
-from src.identity.application.interfaces.repositories import IUserRepository
-from src.identity.domain.entities import User
-from src.identity.infrastructure.sqlalchemy.orm_models import UserORM
+from src.modules.identity.application.interfaces.repositories import IUserRepository
+from src.modules.identity.domain.entities import User
+from src.modules.identity.infrastructure.sqlalchemy.orm_models import UserORM
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
+@final
 class SqlAlchemyUserRepository(IUserRepository):
     __session: AsyncSession
 

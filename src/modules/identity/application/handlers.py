@@ -3,19 +3,19 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from src.identity.application.commands import (
+from src.modules.identity.application.commands import (
     AuthenticateUserCommand,
     CreateUserCommand,
     RefreshTokenCommand,
 )
-from src.identity.application.exceptions import InvalidCredentialsError
-from src.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
-from src.identity.domain.entities import User
+from src.modules.identity.application.exceptions import InvalidCredentialsError
+from src.modules.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
+from src.modules.identity.domain.entities import User
 from src.libs.utils.hashing import hash_with_bcrypt, verify_bcrypt_hash
 
 if TYPE_CHECKING:
-    from src.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
-    from src.identity.infrastructure.token_service import TokenService
+    from src.modules.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
+    from src.modules.identity.infrastructure.token_service import TokenService
 
     from .commands import AuthenticateUserCommand, CreateUserCommand, RefreshTokenCommand
 

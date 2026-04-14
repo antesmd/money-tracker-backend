@@ -2,7 +2,7 @@ from __future__ import annotations
 
 
 class BaseIdentityApplicationError(Exception):
-    """Базовое исключение для модуля identity."""
+    pass
 
 
 class InvalidCredentialsError(BaseIdentityApplicationError):
