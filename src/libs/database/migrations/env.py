@@ -5,8 +5,14 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from src.identity.infrastructure.sqlalchemy.orm_models import Base as IdentityORMBase
 from src.libs.utils import Environ
+from src.modules.accounts.infrastructure.sqlalchemy.orm_models import Base as AccountsORMBase
+from src.modules.budgets.infrastructure.sqlalchemy.orm_models import Base as BudgetsORMBase
+from src.modules.categories.infrastructure.sqlalchemy.orm_models import Base as CategoriesORMBase
+from src.modules.identity.infrastructure.sqlalchemy.orm_models import Base as IdentityORMBase
+from src.modules.transactions.infrastructure.sqlalchemy.orm_models import (
+    Base as TransactionsORMBase,
+)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -27,7 +33,13 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-target_metadata = IdentityORMBase.metadata
+target_metadata = (
+    IdentityORMBase.metadata,
+    CategoriesORMBase.metadata,
+    AccountsORMBase.metadata,
+    TransactionsORMBase.metadata,
+    BudgetsORMBase.metadata,
+)
 
 
 def run_migrations_offline() -> None:
