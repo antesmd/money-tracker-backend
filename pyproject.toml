@@ -27,7 +27,7 @@ dev = [
 [tool.ruff]
 line-length = 100
 select = ["ALL"]
-extend-ignore = ["TID", "D"]
+extend-ignore = ["TID", "D", "PLR0913"]
 
 [tool.ruff.lint.flake8-type-checking]
 quote-annotations = true
@@ -43,8 +43,14 @@ runtime-evaluated-base-classes = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"src/libs/dependency_injection/*" = ["TC"]
+"**/dependency_injection/*" = ["TC"]
+"**/infrastructure/sqlalchemy/orm_models.py" = ["TC"]
 "__init__.py" = ["I002"]
+
+[tool.ruff.lint.isort]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+required-imports = ["from __future__ import annotations"]
+combine-as-imports = true
 
 [tool.mypy]
 strict = true
