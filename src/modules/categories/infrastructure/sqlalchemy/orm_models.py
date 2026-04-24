@@ -18,7 +18,6 @@ class CategoryORMConstructorFields(TypedDict):
     category_id: str
     user_id: str
     name: str
-    type: TransactionType
     created_at: datetime
     updated_at: datetime
 
@@ -40,10 +39,6 @@ class CategoryORM(Base):
     )
     name: Mapped[str] = mapped_column(
         String(100),
-        nullable=False,
-    )
-    type: Mapped[TransactionType] = mapped_column(
-        Enum(TransactionType, native_enum=False),
         nullable=False,
     )
     created_at: Mapped[datetime] = mapped_column(

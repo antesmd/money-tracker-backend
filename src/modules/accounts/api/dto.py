@@ -12,7 +12,6 @@ class CreateAccountRequest(BaseModel):
     name: str
     account_type: AccountType
     balance: Decimal
-    currency: str = "RUB"
 
 
 class UpdateAccountRequest(BaseModel):
@@ -30,6 +29,5 @@ class AccountResponse(BaseModel):
     name: str
     account_type: AccountType
     balance: Decimal
-    currency: str
     created_at: datetime
     updated_at: datetime

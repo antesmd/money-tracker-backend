@@ -21,7 +21,7 @@ class Transaction:
     user_id: str  # No FK - weak coupling
     account_id: str  # Reference to accounts module - no FK
     category_id: str  # Reference to categories module - no FK
-    type: TransactionType
+    transaction_type: TransactionType
     amount: Decimal
     description: str | None = None
     date: datetime = field(default_factory=datetime.utcnow)
@@ -35,7 +35,7 @@ class Transaction:
             "user_id": self.user_id,
             "account_id": self.account_id,
             "category_id": self.category_id,
-            "transaction_type": self.type.value,
+            "transaction_type": self.transaction_type.value,
             "amount": str(self.amount),
             "description": self.description,
             "date": self.date.isoformat(),

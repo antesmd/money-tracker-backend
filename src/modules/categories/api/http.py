@@ -37,14 +37,12 @@ async def create_category(
     command = CreateCategoryCommand(
         user_id=user_id,
         name=body.name,
-        type=body.type,
     )
     category = await create_category_use_case(command, unit_of_work=unit_of_work)
     return CategoryResponse(
         category_id=category.category_id,
         user_id=category.user_id,
         name=category.name,
-        type=category.type,
         created_at=category.created_at,
         updated_at=category.updated_at,
     )
@@ -62,7 +60,6 @@ async def get_user_categories(
             category_id=category.category_id,
             user_id=category.user_id,
             name=category.name,
-            type=category.type,
             created_at=category.created_at,
             updated_at=category.updated_at,
         )
@@ -93,7 +90,6 @@ async def update_category(
         category_id=category.category_id,
         user_id=category.user_id,
         name=category.name,
-        type=category.type,
         created_at=category.created_at,
         updated_at=category.updated_at,
     )

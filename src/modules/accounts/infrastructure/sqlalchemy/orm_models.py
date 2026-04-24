@@ -20,7 +20,6 @@ class AccountORMConstructorFields(TypedDict):
     name: str
     account_type: AccountType
     balance: Decimal
-    currency: str
     created_at: datetime
     updated_at: datetime
 
@@ -52,11 +51,6 @@ class AccountORM(Base):
         Numeric(precision=15, scale=2),
         nullable=False,
         default=0,
-    )
-    currency: Mapped[str] = mapped_column(
-        String(3),
-        nullable=False,
-        default="RUB",
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime,

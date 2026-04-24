@@ -25,7 +25,6 @@ class Account:
     name: str
     account_type: AccountType
     balance: Decimal
-    currency: str = "RUB"
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
 
@@ -37,6 +36,5 @@ class Account:
             "name": self.name,
             "account_type": self.account_type.value,
             "balance": str(self.balance),
-            "currency": self.currency,
             "created_at": self.created_at.isoformat(),
         }

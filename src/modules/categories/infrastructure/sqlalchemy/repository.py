@@ -24,7 +24,6 @@ class SqlAlchemyCategoryRepository(ICategoryRepository):
             category_id=category.category_id,
             user_id=category.user_id,
             name=category.name,
-            type=category.type,
             created_at=category.created_at,
             updated_at=category.updated_at,
         )
@@ -40,7 +39,6 @@ class SqlAlchemyCategoryRepository(ICategoryRepository):
             category_id=orm.category_id,
             user_id=orm.user_id,
             name=orm.name,
-            type=orm.type,
             created_at=orm.created_at,
             updated_at=orm.updated_at,
         )
@@ -55,7 +53,6 @@ class SqlAlchemyCategoryRepository(ICategoryRepository):
                 category_id=orm.category_id,
                 user_id=orm.user_id,
                 name=orm.name,
-                type=orm.type,
                 created_at=orm.created_at,
                 updated_at=orm.updated_at,
             )

@@ -19,7 +19,6 @@ class Category:
     category_id: str
     user_id: str  # Ссылка на пользователя без FK - слабая связь между доменами
     name: str
-    type: TransactionType
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
 
@@ -29,6 +28,5 @@ class Category:
             "category_id": self.category_id,
             "user_id": self.user_id,
             "name": self.name,
-            "transaction_type": self.type.value,
             "created_at": self.created_at.isoformat(),
         }

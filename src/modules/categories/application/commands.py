@@ -8,7 +8,6 @@ from src.modules.categories.domain.entities import TransactionType
 class CreateCategoryCommand(NamedTuple):
     user_id: str
     name: str
-    type: TransactionType
 
 
 class UpdateCategoryCommand(NamedTuple):

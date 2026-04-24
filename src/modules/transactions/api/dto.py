@@ -11,7 +11,7 @@ from src.modules.transactions.domain.entities import TransactionType
 class CreateTransactionRequest(BaseModel):
     account_id: str
     category_id: str
-    type: TransactionType
+    transaction_type: TransactionType
     amount: Decimal
     description: str | None = None
     date: datetime | None = None
@@ -20,7 +20,7 @@ class CreateTransactionRequest(BaseModel):
 class UpdateTransactionRequest(BaseModel):
     account_id: str
     category_id: str
-    type: TransactionType
+    transaction_type: TransactionType
     amount: Decimal
     description: str | None = None
     date: datetime | None = None
@@ -31,7 +31,7 @@ class TransactionResponse(BaseModel):
     user_id: str
     account_id: str
     category_id: str
-    type: TransactionType
+    transaction_type: TransactionType
     amount: Decimal
     description: str | None
     date: datetime

@@ -19,7 +19,7 @@ class TransactionORMConstructorFields(TypedDict):
     user_id: str
     account_id: str
     category_id: str
-    type: TransactionType
+    transaction_type: TransactionType
     amount: Decimal
     description: str | None
     date: datetime
@@ -53,7 +53,7 @@ class TransactionORM(Base):
         nullable=False,
         index=True,
     )
-    type: Mapped[TransactionType] = mapped_column(
+    transaction_type: Mapped[TransactionType] = mapped_column(
         Enum(TransactionType, native_enum=False),
         nullable=False,
     )

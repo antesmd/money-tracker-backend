@@ -25,7 +25,6 @@ async def handle_create_category(
         category_id=str(uuid4()),
         user_id=command.user_id,
         name=command.name,
-        type=command.type,
     )
     unit_of_work.categories.add(category)
     await unit_of_work.commit()

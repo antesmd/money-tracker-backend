@@ -46,7 +46,6 @@ async def create_account(
         name=body.name,
         account_type=body.account_type,
         balance=body.balance,
-        currency=body.currency,
     )
     account = await create_account_use_case(command, unit_of_work=unit_of_work)
     return AccountResponse(
@@ -55,7 +54,6 @@ async def create_account(
         name=account.name,
         account_type=account.account_type,
         balance=account.balance,
-        currency=account.currency,
         created_at=account.created_at,
         updated_at=account.updated_at,
     )
@@ -75,7 +73,6 @@ async def get_user_accounts(
             name=account.name,
             account_type=account.account_type,
             balance=account.balance,
-            currency=account.currency,
             created_at=account.created_at,
             updated_at=account.updated_at,
         )
@@ -109,7 +106,6 @@ async def update_account(
         name=account.name,
         account_type=account.account_type,
         balance=account.balance,
-        currency=account.currency,
         created_at=account.created_at,
         updated_at=account.updated_at,
     )
@@ -140,7 +136,6 @@ async def update_account_balance(
         name=account.name,
         account_type=account.account_type,
         balance=account.balance,
-        currency=account.currency,
         created_at=account.created_at,
         updated_at=account.updated_at,
     )

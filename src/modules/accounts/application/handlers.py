@@ -28,7 +28,6 @@ async def handle_create_account(
         name=command.name,
         account_type=command.account_type,
         balance=command.balance,
-        currency=command.currency,
     )
     unit_of_work.accounts.add(account)
     await unit_of_work.commit()

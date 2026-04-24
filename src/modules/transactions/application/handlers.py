@@ -28,7 +28,7 @@ async def handle_create_transaction(
         user_id=command.user_id,
         account_id=command.account_id,
         category_id=command.category_id,
-        type=command.type,
+        transaction_type=command.transaction_type,
         amount=command.amount,
         description=command.description,
         date=command.date or DateTimeUtils.utc_now(),
@@ -48,7 +48,7 @@ async def handle_update_transaction(
 
     transaction.account_id = command.account_id
     transaction.category_id = command.category_id
-    transaction.type = command.type
+    transaction.transaction_type = command.transaction_type
     transaction.amount = command.amount
     transaction.description = command.description
     transaction.date = command.date or transaction.date

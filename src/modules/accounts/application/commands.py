@@ -13,7 +13,6 @@ class CreateAccountCommand(NamedTuple):
     name: str
     account_type: AccountType
     balance: Decimal
-    currency: str = "RUB"
 
 
 class UpdateAccountCommand(NamedTuple):
