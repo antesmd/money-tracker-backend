@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 
+from src.libs.authentication.authentication_client import authenticate
 from src.modules.accounts.application.commands import (
     CreateAccountCommand,
     DeleteAccountCommand,
@@ -12,7 +13,16 @@ from src.modules.accounts.application.commands import (
     UpdateAccountCommand,
 )
 from src.modules.accounts.application.exceptions import AccountNotFoundError
+from src.modules.accounts.application.interfaces import (
+    IAccountReadModelRepository,
+)
 from src.modules.accounts.application.interfaces.unit_of_work import IAccountsUnitOfWork
+from src.modules.accounts.application.queries import (
+    GetAccountReadModelByIdQuery,
+    GetUserAccountsReadModelQuery,
+    handle_get_account_read_model_by_id,
+    handle_get_user_accounts_read_model,
+)
 from src.modules.accounts.application.use_cases import (
     create_account_use_case,
     delete_account_use_case,
@@ -20,12 +30,15 @@ from src.modules.accounts.application.use_cases import (
     update_account_balance_use_case,
     update_account_use_case,
 )
+from src.modules.accounts.infrastructure.dependency_injection import (
+    read_model_repository_provider,
+)
 from src.modules.accounts.infrastructure.dependency_injection.uow.accounts_uow_provider import (
     get_accounts_uow,
 )
-from src.libs.authentication.authentication_client import authenticate
 
 from .dto import (
+    AccountReadModelResponse,
     AccountResponse,
     CreateAccountRequest,
     UpdateAccountBalanceRequest,
@@ -155,3 +168,81 @@ async def delete_account(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Account not found",
         ) from exc
+
+
+@router.get(
+    path="/accounts/read-model",
+    status_code=status.HTTP_200_OK,
+    summary="Get accounts with aggregated balance",
+)
+async def get_accounts_read_model_endpoint(
+    user_id: Annotated[str, Depends(authenticate)],
+    repository: Annotated[
+        IAccountReadModelRepository,
+        Depends(read_model_repository_provider.get_account_read_model_repository),
+    ],
+    skip: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=100)] = 100,
+) -> list[AccountReadModelResponse]:
+    query = GetUserAccountsReadModelQuery(
+        user_id=user_id,
+        skip=skip,
+        limit=limit,
+    )
+    accounts = await handle_get_user_accounts_read_model(query, repository)
+
+    return [
+        AccountReadModelResponse(
+            account_id=account.account_id,
+            user_id=account.user_id,
+            name=account.name,
+            account_type=account.account_type,
+            balance=account.balance,
+            total_inflow=account.total_inflow,
+            total_outflow=account.total_outflow,
+            transaction_count=account.transaction_count,
+            last_updated=account.last_updated,
+        )
+        for account in accounts
+    ]
+
+
+@router.get(
+    path="/accounts/read-model/{account_id}",
+    status_code=status.HTTP_200_OK,
+    summary="Get account by ID with balance aggregation",
+)
+async def get_account_read_model_by_id_endpoint(
+    account_id: str,
+    user_id: Annotated[str, Depends(authenticate)],
+    repository: Annotated[
+        IAccountReadModelRepository,
+        Depends(read_model_repository_provider.get_account_read_model_repository),
+    ],
+) -> AccountReadModelResponse:
+    query = GetAccountReadModelByIdQuery(account_id=account_id)
+    account = await handle_get_account_read_model_by_id(query, repository)
+
+    if not account:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Account not found",
+        )
+
+    if account.user_id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied",
+        )
+
+    return AccountReadModelResponse(
+        account_id=account.account_id,
+        user_id=account.user_id,
+        name=account.name,
+        account_type=account.account_type,
+        balance=account.balance,
+        total_inflow=account.total_inflow,
+        total_outflow=account.total_outflow,
+        transaction_count=account.transaction_count,
+        last_updated=account.last_updated,
+    )
