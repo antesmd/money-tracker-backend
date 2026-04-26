@@ -18,7 +18,7 @@ class TransactionORMConstructorFields(TypedDict):
     transaction_id: str
     user_id: str
     account_id: str
-    category_id: str
+    category_id: str | None
     transaction_type: TransactionType
     amount: Decimal
     description: str | None
@@ -37,7 +37,6 @@ class TransactionORM(Base):
         String,
         primary_key=True,
     )
-    # No FK - weak coupling between domains
     user_id: Mapped[str] = mapped_column(
         String,
         nullable=False,
@@ -48,9 +47,9 @@ class TransactionORM(Base):
         nullable=False,
         index=True,
     )
-    category_id: Mapped[str] = mapped_column(
+    category_id: Mapped[str | None] = mapped_column(
         String,
-        nullable=False,
+        nullable=True,
         index=True,
     )
     transaction_type: Mapped[TransactionType] = mapped_column(

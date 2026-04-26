@@ -12,7 +12,6 @@ if TYPE_CHECKING:
         CreateAccountCommand,
         DeleteAccountCommand,
         GetUserAccountsCommand,
-        UpdateAccountBalanceCommand,
         UpdateAccountCommand,
     )
     from src.modules.accounts.application.interfaces.unit_of_work import IAccountsUnitOfWork
@@ -27,7 +26,6 @@ async def handle_create_account(
         user_id=command.user_id,
         name=command.name,
         account_type=command.account_type,
-        balance=command.balance,
     )
     unit_of_work.accounts.add(account)
     await unit_of_work.commit()
@@ -44,21 +42,6 @@ async def handle_update_account(
 
     account.name = command.name
     account.account_type = command.account_type
-    account.updated_at = DateTimeUtils.utc_now()
-    await unit_of_work.accounts.update(account)
-    await unit_of_work.commit()
-    return account
-
-
-async def handle_update_account_balance(
-    command: UpdateAccountBalanceCommand,
-    unit_of_work: IAccountsUnitOfWork,
-) -> Account:
-    account = await unit_of_work.accounts.get_by_id(command.account_id)
-    if not account:
-        raise AccountNotFoundError
-
-    account.balance = command.balance
     account.updated_at = DateTimeUtils.utc_now()
     await unit_of_work.accounts.update(account)
     await unit_of_work.commit()

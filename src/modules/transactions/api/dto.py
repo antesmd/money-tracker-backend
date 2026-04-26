@@ -10,7 +10,7 @@ from src.modules.transactions.domain.entities import TransactionType
 
 class CreateTransactionRequest(BaseModel):
     account_id: str
-    category_id: str
+    category_id: str | None = None
     transaction_type: TransactionType
     amount: Decimal
     description: str | None = None
@@ -19,7 +19,7 @@ class CreateTransactionRequest(BaseModel):
 
 class UpdateTransactionRequest(BaseModel):
     account_id: str
-    category_id: str
+    category_id: str | None = None
     transaction_type: TransactionType
     amount: Decimal
     description: str | None = None
@@ -30,7 +30,7 @@ class TransactionResponse(BaseModel):
     transaction_id: str
     user_id: str
     account_id: str
-    category_id: str
+    category_id: str | None
     transaction_type: TransactionType
     amount: Decimal
     description: str | None

@@ -54,7 +54,7 @@ def upgrade() -> None:
         sa.Column("transaction_id", sa.String(), nullable=False),
         sa.Column("user_id", sa.String(), nullable=False),
         sa.Column("account_id", sa.String(), nullable=False),
-        sa.Column("category_id", sa.String(), nullable=False),
+        sa.Column("category_id", sa.String(), nullable=True),
         sa.Column("transaction_type", sa.String(), nullable=False),
         sa.Column("amount", sa.Numeric(precision=15, scale=2), nullable=False),
         sa.Column("description", sa.Text(), nullable=True),

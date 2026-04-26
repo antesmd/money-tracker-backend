@@ -211,8 +211,6 @@ async def delete_budget_endpoint(
         raise handle_unauthorized_budget_access(e) from e
 
 
-# ===== Read Model Endpoints =====
-
 @budgets_router.get(
     path="/budgets/read-model",
     status_code=status.HTTP_200_OK,

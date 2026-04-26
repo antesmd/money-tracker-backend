@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 class CreateTransactionCommand(NamedTuple):
     user_id: str
     account_id: str
-    category_id: str
+    category_id: str | None
     transaction_type: TransactionType
     amount: Decimal
     description: str | None = None
@@ -22,7 +22,7 @@ class CreateTransactionCommand(NamedTuple):
 class UpdateTransactionCommand(NamedTuple):
     transaction_id: str
     account_id: str
-    category_id: str
+    category_id: str | None
     transaction_type: TransactionType
     amount: Decimal
     description: str | None = None

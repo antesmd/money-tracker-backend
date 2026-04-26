@@ -18,9 +18,9 @@ class TransactionType(str, Enum):
 @dataclass
 class Transaction:
     transaction_id: str
-    user_id: str  # No FK - weak coupling
-    account_id: str  # Reference to accounts module - no FK
-    category_id: str  # Reference to categories module - no FK
+    user_id: str
+    account_id: str
+    category_id: str | None
     transaction_type: TransactionType
     amount: Decimal
     description: str | None = None

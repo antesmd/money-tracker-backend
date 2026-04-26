@@ -17,7 +17,7 @@ class TransactionType(str, Enum):
 @dataclass
 class Category:
     category_id: str
-    user_id: str  # Ссылка на пользователя без FK - слабая связь между доменами
+    user_id: str
     name: str
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)

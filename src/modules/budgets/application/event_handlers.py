@@ -1,5 +1,3 @@
-"""Event handlers для обработки событий и обновления read model бюджетов"""
-
 from __future__ import annotations
 
 import logging
@@ -32,7 +30,7 @@ async def handle_budget_created(budget: Budget) -> None:
 
 
 async def handle_transaction_created(event: TransactionCreatedEvent) -> None:
-    if event.transaction_type != "expense":
+    if event.transaction_type != "expense" or event.category_id is None:
         return
 
     async with get_session_context(async_session_maker) as session:
@@ -55,24 +53,22 @@ async def handle_transaction_created(event: TransactionCreatedEvent) -> None:
             )
 
 async def handle_transaction_updated(event: TransactionUpdatedEvent) -> None:
-    """
-    Обработчик обновления транзакции - корректирует read model
-    """
-    if event.transaction_type != "expense":
+    if event.transaction_type != "expense" or event.category_id is None:
         return
 
     async with get_session_context(async_session_maker) as session:
         repository = SqlAlchemyBudgetReadModelRepository(session)
 
         if event.old_category_id != event.category_id:
-            old_read_model = await repository.get_by_category_and_date(
-                category_id=event.old_category_id,
-                user_id=event.user_id,
-                date=event.date,
-            )
-            if old_read_model:
-                old_read_model.reverse_transaction(event.old_amount)
-                await repository.save(old_read_model)
+            if event.old_category_id is not None:
+                old_read_model = await repository.get_by_category_and_date(
+                    category_id=event.old_category_id,
+                    user_id=event.user_id,
+                    date=event.date,
+                )
+                if old_read_model:
+                    old_read_model.reverse_transaction(event.old_amount)
+                    await repository.save(old_read_model)
 
             new_read_model = await repository.get_by_category_and_date(
                 category_id=event.category_id,
@@ -99,7 +95,7 @@ async def handle_transaction_updated(event: TransactionUpdatedEvent) -> None:
 
 
 async def handle_transaction_deleted(event: TransactionDeletedEvent) -> None:
-    if event.transaction_type != "expense":
+    if event.transaction_type != "expense" or event.category_id is None:
         return
 
     async with get_session_context(async_session_maker) as session:

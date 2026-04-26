@@ -12,18 +12,13 @@ class CreateAccountCommand(NamedTuple):
     user_id: str
     name: str
     account_type: AccountType
-    balance: Decimal
+    initial_balance: Decimal
 
 
 class UpdateAccountCommand(NamedTuple):
     account_id: str
     name: str
     account_type: AccountType
-
-
-class UpdateAccountBalanceCommand(NamedTuple):
-    account_id: str
-    balance: Decimal
 
 
 class DeleteAccountCommand(NamedTuple):

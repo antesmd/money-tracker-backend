@@ -9,7 +9,6 @@ from src.modules.accounts.application.commands import (
     CreateAccountCommand,
     DeleteAccountCommand,
     GetUserAccountsCommand,
-    UpdateAccountBalanceCommand,
     UpdateAccountCommand,
 )
 from src.modules.accounts.application.exceptions import AccountNotFoundError
@@ -27,7 +26,6 @@ from src.modules.accounts.application.use_cases import (
     create_account_use_case,
     delete_account_use_case,
     get_user_accounts_use_case,
-    update_account_balance_use_case,
     update_account_use_case,
 )
 from src.modules.accounts.infrastructure.dependency_injection import (
@@ -41,7 +39,6 @@ from .dto import (
     AccountReadModelResponse,
     AccountResponse,
     CreateAccountRequest,
-    UpdateAccountBalanceRequest,
     UpdateAccountRequest,
 )
 
@@ -58,7 +55,7 @@ async def create_account(
         user_id=user_id,
         name=body.name,
         account_type=body.account_type,
-        balance=body.balance,
+        initial_balance=body.initial_balance,
     )
     account = await create_account_use_case(command, unit_of_work=unit_of_work)
     return AccountResponse(
@@ -66,7 +63,6 @@ async def create_account(
         user_id=account.user_id,
         name=account.name,
         account_type=account.account_type,
-        balance=account.balance,
         created_at=account.created_at,
         updated_at=account.updated_at,
     )
@@ -85,7 +81,6 @@ async def get_user_accounts(
             user_id=account.user_id,
             name=account.name,
             account_type=account.account_type,
-            balance=account.balance,
             created_at=account.created_at,
             updated_at=account.updated_at,
         )
@@ -118,37 +113,6 @@ async def update_account(
         user_id=account.user_id,
         name=account.name,
         account_type=account.account_type,
-        balance=account.balance,
-        created_at=account.created_at,
-        updated_at=account.updated_at,
-    )
-
-
-@router.patch(path="/accounts/{account_id}/balance")
-async def update_account_balance(
-    account_id: str,
-    _user_id: Annotated[str, Depends(authenticate)],
-    body: Annotated[UpdateAccountBalanceRequest, Body()],
-    unit_of_work: Annotated[IAccountsUnitOfWork, Depends(get_accounts_uow)],
-) -> AccountResponse:
-    command = UpdateAccountBalanceCommand(
-        account_id=account_id,
-        balance=body.balance,
-    )
-    try:
-        account = await update_account_balance_use_case(command, unit_of_work=unit_of_work)
-    except AccountNotFoundError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Account not found",
-        ) from exc
-
-    return AccountResponse(
-        account_id=account.account_id,
-        user_id=account.user_id,
-        name=account.name,
-        account_type=account.account_type,
-        balance=account.balance,
         created_at=account.created_at,
         updated_at=account.updated_at,
     )

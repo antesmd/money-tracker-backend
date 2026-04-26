@@ -19,7 +19,6 @@ async def handle_get_active_budgets_read_model(
     query: GetActiveBudgetsReadModelQuery,
     repository: IBudgetReadModelRepository,
 ) -> list[BudgetReadModel]:
-    """Get active budgets from read model"""
     return await repository.get_active_budgets(
         user_id=query.user_id,
         current_date=query.current_date,

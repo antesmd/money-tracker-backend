@@ -25,7 +25,6 @@ class SqlAlchemyAccountRepository(IAccountRepository):
             user_id=account.user_id,
             name=account.name,
             account_type=account.account_type,
-            balance=account.balance,
             created_at=account.created_at,
             updated_at=account.updated_at,
         )
@@ -42,7 +41,6 @@ class SqlAlchemyAccountRepository(IAccountRepository):
             user_id=orm.user_id,
             name=orm.name,
             account_type=orm.account_type,
-            balance=orm.balance,
             created_at=orm.created_at,
             updated_at=orm.updated_at,
         )
@@ -58,7 +56,6 @@ class SqlAlchemyAccountRepository(IAccountRepository):
                 user_id=orm.user_id,
                 name=orm.name,
                 account_type=orm.account_type,
-                balance=orm.balance,
                 created_at=orm.created_at,
                 updated_at=orm.updated_at,
             )
@@ -72,7 +69,6 @@ class SqlAlchemyAccountRepository(IAccountRepository):
             .values(
                 name=account.name,
                 account_type=account.account_type,
-                balance=account.balance,
                 updated_at=account.updated_at,
             )
         )

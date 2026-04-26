@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import TypedDict, Unpack
 
-from sqlalchemy import DateTime, Enum, Integer, MetaData, Numeric, String
+from sqlalchemy import DateTime, Enum, ForeignKey, Integer, MetaData, Numeric, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from src.modules.accounts.domain.entities import AccountType
@@ -19,7 +19,6 @@ class AccountORMConstructorFields(TypedDict):
     user_id: str
     name: str
     account_type: AccountType
-    balance: Decimal
     created_at: datetime
     updated_at: datetime
 
@@ -46,11 +45,6 @@ class AccountORM(Base):
     account_type: Mapped[AccountType] = mapped_column(
         Enum(AccountType, native_enum=False),
         nullable=False,
-    )
-    balance: Mapped[Decimal] = mapped_column(
-        Numeric(precision=15, scale=2),
-        nullable=False,
-        default=0,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
@@ -83,6 +77,7 @@ class AccountReadModelORM(Base):
 
     account_id: Mapped[str] = mapped_column(
         String,
+        ForeignKey("accounts.accounts.account_id", ondelete="CASCADE"),
         primary_key=True,
     )
     user_id: Mapped[str] = mapped_column(

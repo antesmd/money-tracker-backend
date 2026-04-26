@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from decimal import Decimal
 from typing import TYPE_CHECKING
 
 from src.libs.database import async_session_maker, get_session_context
@@ -21,10 +22,10 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-async def handle_account_created(account: Account) -> None:
+async def handle_account_created(account: Account, initial_balance: Decimal = Decimal("0")) -> None:
     async with get_session_context(async_session_maker) as session:
         repository = SqlAlchemyAccountReadModelRepository(session)
-        read_model = AccountReadModel.from_account(account)
+        read_model = AccountReadModel.from_account(account, initial_balance=initial_balance)
         await repository.save(read_model)
         await session.commit()
 
@@ -34,7 +35,7 @@ async def handle_account_updated(account: Account) -> None:
         repository = SqlAlchemyAccountReadModelRepository(session)
         read_model = await repository.get_by_id(account.account_id)
         if read_model:
-            read_model.update_account(account.name, account.account_type, account.balance)
+            read_model.update_account(account.name, account.account_type)
             await repository.save(read_model)
             await session.commit()
 

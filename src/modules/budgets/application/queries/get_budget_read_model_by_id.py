@@ -17,5 +17,4 @@ async def handle_get_budget_read_model_by_id(
     query: GetBudgetReadModelByIdQuery,
     repository: IBudgetReadModelRepository,
 ) -> BudgetReadModel | None:
-    """Get budget by ID from read model"""
     return await repository.get_by_id(query.budget_id)

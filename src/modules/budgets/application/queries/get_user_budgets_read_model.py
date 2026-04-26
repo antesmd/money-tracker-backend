@@ -19,7 +19,6 @@ async def handle_get_user_budgets_read_model(
     query: GetUserBudgetsReadModelQuery,
     repository: IBudgetReadModelRepository,
 ) -> list[BudgetReadModel]:
-    """Get user's budgets from read model"""
     return await repository.get_by_user_id(
         user_id=query.user_id,
         skip=query.skip,

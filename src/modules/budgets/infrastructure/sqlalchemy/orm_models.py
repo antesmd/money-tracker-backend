@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import DateTime, Integer, MetaData, Numeric, String
+from sqlalchemy import DateTime, ForeignKey, Integer, MetaData, Numeric, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -27,7 +27,11 @@ class BudgetORM(Base):
 class BudgetReadModelORM(Base):
     __tablename__ = "budget_read_model"
 
-    budget_id: Mapped[str] = mapped_column(String, primary_key=True)
+    budget_id: Mapped[str] = mapped_column(
+        String,
+        ForeignKey("budgets.budgets.budget_id", ondelete="CASCADE"),
+        primary_key=True,
+    )
     user_id: Mapped[str] = mapped_column(String, index=True, nullable=False)
     category_id: Mapped[str] = mapped_column(String, index=True, nullable=False)
     amount: Mapped[Decimal] = mapped_column(Numeric(15, 2), nullable=False)

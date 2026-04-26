@@ -14,7 +14,6 @@ if TYPE_CHECKING:
         CreateAccountCommand,
         DeleteAccountCommand,
         GetUserAccountsCommand,
-        UpdateAccountBalanceCommand,
         UpdateAccountCommand,
     )
     from src.modules.accounts.application.interfaces.unit_of_work import IAccountsUnitOfWork
@@ -26,7 +25,7 @@ async def create_account_use_case(
     unit_of_work: IAccountsUnitOfWork,
 ) -> Account:
     account = await handlers.handle_create_account(command, unit_of_work)
-    await handle_account_created(account)
+    await handle_account_created(account, initial_balance=command.initial_balance)
     return account
 
 
@@ -35,15 +34,6 @@ async def update_account_use_case(
     unit_of_work: IAccountsUnitOfWork,
 ) -> Account:
     account = await handlers.handle_update_account(command, unit_of_work)
-    await handle_account_updated(account)
-    return account
-
-
-async def update_account_balance_use_case(
-    command: UpdateAccountBalanceCommand,
-    unit_of_work: IAccountsUnitOfWork,
-) -> Account:
-    account = await handlers.handle_update_account_balance(command, unit_of_work)
     await handle_account_updated(account)
     return account
 

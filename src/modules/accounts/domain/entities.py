@@ -27,7 +27,6 @@ class Account:
     user_id: str
     name: str
     account_type: AccountType
-    balance: Decimal
     created_at: datetime = field(default_factory=datetime.utcnow)
     updated_at: datetime = field(default_factory=datetime.utcnow)
 
@@ -38,7 +37,6 @@ class Account:
             "user_id": self.user_id,
             "name": self.name,
             "account_type": self.account_type.value,
-            "balance": str(self.balance),
             "created_at": self.created_at.isoformat(),
         }
 
@@ -56,13 +54,13 @@ class AccountReadModel:
     last_updated: datetime
 
     @classmethod
-    def from_account(cls, account: Account) -> AccountReadModel:
+    def from_account(cls, account: Account, initial_balance: Decimal = Decimal("0.0")) -> AccountReadModel:
         return cls(
             account_id=account.account_id,
             user_id=account.user_id,
             name=account.name,
             account_type=account.account_type,
-            balance=account.balance,
+            balance=initial_balance,
             total_inflow=Decimal("0.0"),
             total_outflow=Decimal("0.0"),
             transaction_count=0,
@@ -97,12 +95,9 @@ class AccountReadModel:
         self,
         name: str | None,
         account_type: AccountType | None,
-        balance: Decimal | None = None,
     ) -> None:
         if name is not None:
             self.name = name
         if account_type is not None:
             self.account_type = account_type
-        if balance is not None:
-            self.balance = balance
         self.last_updated = DateTimeUtils.utc_now()
