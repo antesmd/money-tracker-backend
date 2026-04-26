@@ -14,7 +14,7 @@ class CreateTransactionRequest(BaseModel):
     transaction_type: TransactionType
     amount: Decimal
     description: str | None = None
-    date: datetime | None = None
+    date: NaiveDatetime | None = None
 
 
 class UpdateTransactionRequest(BaseModel):
