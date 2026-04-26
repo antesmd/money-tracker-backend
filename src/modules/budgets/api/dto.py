@@ -7,10 +7,10 @@ from pydantic import BaseModel, Field
 
 
 class CreateBudgetRequest(BaseModel):
-    category_id: str = Field(..., description="ID категории для бюджета")
-    amount: Decimal = Field(..., ge=0, description="Сумма бюджета")
-    period_start: datetime = Field(..., description="Начало периода")
-    period_end: datetime = Field(..., description="Конец периода")
+    category_id: str = Field(description="ID категории для бюджета")
+    amount: Decimal = Field(ge=0, description="Сумма бюджета")
+    period_start: datetime = Field(description="Начало периода")
+    period_end: datetime = Field(description="Конец периода")
 
 
 class UpdateBudgetRequest(BaseModel):
@@ -29,6 +29,22 @@ class BudgetResponse(BaseModel):
     is_active: bool
     created_at: datetime
     updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class BudgetReadModelResponse(BaseModel):
+    budget_id: str
+    user_id: str
+    category_id: str
+    amount: Decimal
+    spent: Decimal
+    remaining: Decimal
+    transaction_count: int
+    period_start: datetime
+    period_end: datetime
+    last_updated: datetime
 
     class Config:
         from_attributes = True

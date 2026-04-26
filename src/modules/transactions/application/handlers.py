@@ -3,9 +3,15 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
+from src.libs.message_bus import global_message_bus
 from src.libs.utils import DateTimeUtils
 from src.modules.transactions.application.exceptions import TransactionNotFoundError
 from src.modules.transactions.domain.entities import Transaction
+from src.modules.transactions.domain.events import (
+    TransactionCreatedEvent,
+    TransactionDeletedEvent,
+    TransactionUpdatedEvent,
+)
 
 if TYPE_CHECKING:
     from src.modules.transactions.application.commands import (
@@ -17,6 +23,8 @@ if TYPE_CHECKING:
         UpdateTransactionCommand,
     )
     from src.modules.transactions.application.interfaces.unit_of_work import ITransactionsUnitOfWork
+
+message_bus = global_message_bus
 
 
 async def handle_create_transaction(
@@ -35,6 +43,20 @@ async def handle_create_transaction(
     )
     unit_of_work.transactions.add(transaction)
     await unit_of_work.commit()
+
+    event = TransactionCreatedEvent(
+        transaction_id=transaction.transaction_id,
+        user_id=transaction.user_id,
+        account_id=transaction.account_id,
+        category_id=transaction.category_id,
+        transaction_type=transaction.transaction_type,
+        amount=transaction.amount,
+        description=transaction.description,
+        date=transaction.date,
+        created_at=transaction.created_at,
+    )
+    message_bus.dispatch(event)
+
     return transaction
 
 
@@ -46,6 +68,9 @@ async def handle_update_transaction(
     if not transaction:
         raise TransactionNotFoundError
 
+    old_category_id = transaction.category_id
+    old_amount = transaction.amount
+
     transaction.account_id = command.account_id
     transaction.category_id = command.category_id
     transaction.transaction_type = command.transaction_type
@@ -55,6 +80,22 @@ async def handle_update_transaction(
     transaction.updated_at = DateTimeUtils.utc_now()
     await unit_of_work.transactions.update(transaction)
     await unit_of_work.commit()
+
+    event = TransactionUpdatedEvent(
+        transaction_id=transaction.transaction_id,
+        user_id=transaction.user_id,
+        account_id=transaction.account_id,
+        category_id=transaction.category_id,
+        transaction_type=transaction.transaction_type,
+        amount=transaction.amount,
+        description=transaction.description,
+        date=transaction.date,
+        updated_at=transaction.updated_at,
+        old_category_id=old_category_id,
+        old_amount=old_amount,
+    )
+    message_bus.dispatch(event)
+
     return transaction
 
 
@@ -66,8 +107,20 @@ async def handle_delete_transaction(
     if not transaction:
         raise TransactionNotFoundError
 
+    event = TransactionDeletedEvent(
+        transaction.transaction_id,
+        transaction.user_id,
+        transaction.account_id,
+        transaction.category_id,
+        transaction.transaction_type,
+        transaction.amount,
+        transaction.date,
+    )
+
     await unit_of_work.transactions.delete(command.transaction_id)
     await unit_of_work.commit()
+
+    message_bus.dispatch(event)
 
 
 async def handle_get_user_transactions(

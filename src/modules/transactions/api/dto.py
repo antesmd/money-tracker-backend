@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, NaiveDatetime
 
 from src.modules.transactions.domain.entities import TransactionType
 
@@ -23,7 +23,7 @@ class UpdateTransactionRequest(BaseModel):
     transaction_type: TransactionType
     amount: Decimal
     description: str | None = None
-    date: datetime | None = None
+    date: NaiveDatetime | None = None
 
 
 class TransactionResponse(BaseModel):

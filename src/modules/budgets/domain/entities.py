@@ -68,3 +68,49 @@ class Budget:
             "period_end": self.period_end.isoformat(),
             "created_at": self.created_at.isoformat(),
         }
+
+
+@dataclass
+class BudgetReadModel:
+    budget_id: str
+    user_id: str
+    category_id: str
+    amount: Decimal
+    spent: Decimal
+    remaining: Decimal
+    transaction_count: int
+    period_start: datetime
+    period_end: datetime
+    last_updated: datetime
+
+    @classmethod
+    def from_budget(cls, budget: Budget) -> BudgetReadModel:
+        return cls(
+            budget_id=budget.budget_id,
+            user_id=budget.user_id,
+            category_id=budget.category_id,
+            amount=budget.amount,
+            spent=Decimal("0.0"),
+            remaining=budget.amount,
+            transaction_count=0,
+            period_start=budget.period_start,
+            period_end=budget.period_end,
+            last_updated=DateTimeUtils.utc_now(),
+        )
+
+    def apply_transaction(self, amount: Decimal) -> None:
+        self.spent += amount
+        self.remaining = self.amount - self.spent
+        self.transaction_count += 1
+        self.last_updated = DateTimeUtils.utc_now()
+
+    def reverse_transaction(self, amount: Decimal) -> None:
+        self.spent -= amount
+        self.remaining = self.amount - self.spent
+        self.transaction_count -= 1
+        self.last_updated = DateTimeUtils.utc_now()
+
+    def update_amount(self, new_amount: Decimal) -> None:
+        self.amount = new_amount
+        self.remaining = self.amount - self.spent
+        self.last_updated = DateTimeUtils.utc_now()

@@ -3,6 +3,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
+from src.modules.budgets.application.event_handlers import (
+    handle_budget_created,
+    handle_budget_deleted,
+    handle_budget_updated,
+)
 from src.modules.budgets.application.exceptions import (
     BudgetNotFoundError,
     UnauthorizedBudgetAccessError,
@@ -37,6 +42,8 @@ async def create_budget(
         )
         await transaction.budgets.add(budget)
 
+    await handle_budget_created(budget)
+
     return budget
 
 
@@ -60,6 +67,8 @@ async def update_budget(
 
         await transaction.budgets.update(budget)
 
+    await handle_budget_updated(budget)
+
     return budget
 
 
@@ -74,7 +83,10 @@ async def delete_budget(
         if budget.user_id != command.user_id:
             raise UnauthorizedBudgetAccessError(command.user_id)
 
-        await transaction.budgets.delete(budget.budget_id)
+        budget_id = budget.budget_id
+        await transaction.budgets.delete(budget_id)
+
+    await handle_budget_deleted(budget_id)
 
 
 async def get_user_budgets(
