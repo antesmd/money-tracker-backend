@@ -55,7 +55,7 @@ async def handle_create_transaction(
         date=transaction.date,
         created_at=transaction.created_at,
     )
-    message_bus.dispatch(event)
+    await message_bus.dispatch(event)
 
     return transaction
 
@@ -70,6 +70,7 @@ async def handle_update_transaction(
 
     old_category_id = transaction.category_id
     old_amount = transaction.amount
+    old_transaction_type = transaction.transaction_type
 
     transaction.account_id = command.account_id
     transaction.category_id = command.category_id
@@ -93,8 +94,9 @@ async def handle_update_transaction(
         updated_at=transaction.updated_at,
         old_category_id=old_category_id,
         old_amount=old_amount,
+        old_transaction_type=old_transaction_type,
     )
-    message_bus.dispatch(event)
+    await message_bus.dispatch(event)
 
     return transaction
 
@@ -120,7 +122,7 @@ async def handle_delete_transaction(
     await unit_of_work.transactions.delete(command.transaction_id)
     await unit_of_work.commit()
 
-    message_bus.dispatch(event)
+    await message_bus.dispatch(event)
 
 
 async def handle_get_user_transactions(

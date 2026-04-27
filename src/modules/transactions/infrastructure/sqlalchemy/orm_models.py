@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import TypedDict, Unpack
 
-from sqlalchemy import DateTime, Enum, MetaData, Numeric, String, Text
+from sqlalchemy import DateTime, Enum, Integer, MetaData, Numeric, String, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from src.modules.transactions.domain.entities import TransactionType
@@ -69,12 +69,46 @@ class TransactionORM(Base):
         nullable=False,
         index=True,
     )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
-    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=datetime.utcnow,
         onupdate=datetime.utcnow,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+    )
+
+
+class DashboardStatisticsORMConstructorFields(TypedDict):
+    user_id: str
+    total_income: Decimal
+    total_expense: Decimal
+    last_updated: datetime
+
+
+class DashboardStatisticsORM(Base):
+    __tablename__ = "dashboard_statistics"
+
+    def __init__(self, **kwargs: Unpack[DashboardStatisticsORMConstructorFields]) -> None:
+        super().__init__(**kwargs)
+
+    user_id: Mapped[str] = mapped_column(
+        String,
+        primary_key=True,
+        index=True,
+    )
+    total_income: Mapped[Decimal] = mapped_column(
+        Numeric(precision=15, scale=2),
+        nullable=False,
+        default=0,
+    )
+    total_expense: Mapped[Decimal] = mapped_column(
+        Numeric(precision=15, scale=2),
+        nullable=False,
+        default=0,
+    )
+    last_updated: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
     )

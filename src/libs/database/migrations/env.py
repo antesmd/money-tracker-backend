@@ -20,7 +20,7 @@ config = context.config
 
 section = config.config_ini_section
 config.set_section_option(section, "DB_USER", Environ.get("DB_USER"))
-config.set_section_option(section, "DB_PORT", Environ.get("DB_PORT"))
+config.set_section_option(section, "DB_PORT", Environ.get("DB_ALEMBIC_PORT"))
 config.set_section_option(section, "DB_ENGINE", Environ.get("DB_MIGRATION_ENGINE"))
 config.set_section_option(section, "DB_PASSWORD", Environ.get("DB_PASSWORD"))
 config.set_section_option(section, "DB_NAME", Environ.get("DB_NAME"))

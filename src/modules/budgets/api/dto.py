@@ -14,7 +14,6 @@ class CreateBudgetRequest(BaseModel):
 
 
 class UpdateBudgetRequest(BaseModel):
-    amount: Decimal | None = Field(None, ge=0, description="Новая сумма бюджета")
     period_start: datetime | None = Field(None, description="Новое начало периода")
     period_end: datetime | None = Field(None, description="Новый конец периода")
 

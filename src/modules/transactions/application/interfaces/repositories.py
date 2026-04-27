@@ -6,7 +6,10 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from datetime import datetime
 
-    from src.modules.transactions.domain.entities import Transaction
+    from src.modules.transactions.domain.entities import (
+        DashboardStatisticsReadModel,
+        Transaction,
+    )
 
 
 class ITransactionRepository(ABC):
@@ -51,4 +54,13 @@ class ITransactionRepository(ABC):
 
     @abstractmethod
     async def delete(self, transaction_id: str) -> None:
+        raise NotImplementedError
+
+class IDashboardStatisticsRepository(ABC):
+    @abstractmethod
+    async def get_by_user_id(self, user_id: str) -> DashboardStatisticsReadModel | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def save(self, read_model: DashboardStatisticsReadModel) -> None:
         raise NotImplementedError

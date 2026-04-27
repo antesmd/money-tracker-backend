@@ -37,3 +37,12 @@ class TransactionResponse(BaseModel):
     date: datetime
     created_at: datetime
     updated_at: datetime
+
+
+class TransactionTypeDistribution(BaseModel):
+    income: Decimal
+    expense: Decimal
+
+
+class DashboardStatisticsResponse(BaseModel):
+    transaction_distribution: TransactionTypeDistribution

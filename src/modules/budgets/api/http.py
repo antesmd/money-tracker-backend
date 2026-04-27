@@ -39,10 +39,8 @@ from src.modules.budgets.application.use_cases import (
     get_user_budgets,
     update_budget,
 )
-from src.modules.budgets.infrastructure.dependency_injection.read_model_repository_provider import (
+from src.modules.budgets.infrastructure.dependency_injection import (
     get_budget_read_model_repository,
-)
-from src.modules.budgets.infrastructure.dependency_injection.uow.budgets_uow_provider import (
     get_budgets_uow,
 )
 from src.modules.budgets.infrastructure.http_exceptions import (
@@ -169,7 +167,6 @@ async def update_budget_endpoint(
     command = UpdateBudgetCommand(
         budget_id=budget_id,
         user_id=user_id,
-        amount=request.amount,
         period_start=request.period_start,
         period_end=request.period_end,
     )

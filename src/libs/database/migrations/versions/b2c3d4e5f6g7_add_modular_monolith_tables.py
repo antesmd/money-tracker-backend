@@ -41,7 +41,6 @@ def upgrade() -> None:
         sa.Column("user_id", sa.String(), nullable=False),
         sa.Column("name", sa.String(length=100), nullable=False),
         sa.Column("account_type", sa.String(), nullable=False),
-        sa.Column("balance", sa.Numeric(precision=15, scale=2), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.Column("updated_at", sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint("account_id"),

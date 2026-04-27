@@ -4,6 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, HTTPException, status
 
+from src.libs.authentication.authentication_client import authenticate
 from src.modules.categories.application.commands import (
     CreateCategoryCommand,
     DeleteCategoryCommand,
@@ -11,19 +12,33 @@ from src.modules.categories.application.commands import (
     UpdateCategoryCommand,
 )
 from src.modules.categories.application.exceptions import CategoryNotFoundError
+from src.modules.categories.application.interfaces.repositories import (
+    ICategoryExpenseRepository,
+)
 from src.modules.categories.application.interfaces.unit_of_work import ICategoriesUnitOfWork
+from src.modules.categories.application.queries import (
+    GetCategoryExpensesQuery,
+    handle_get_category_expenses,
+)
 from src.modules.categories.application.use_cases import (
     create_category_use_case,
     delete_category_use_case,
     get_user_categories_use_case,
     update_category_use_case,
 )
+from src.modules.categories.infrastructure.dependency_injection.category_expense_provider import (
+    CategoryExpenseRepositoryProvider,
+)
 from src.modules.categories.infrastructure.dependency_injection.uow.categories_uow_provider import (
     get_categories_uow,
 )
-from src.libs.authentication.authentication_client import authenticate
 
-from .dto import CategoryResponse, CreateCategoryRequest, UpdateCategoryRequest
+from .dto import (
+    CategoryExpenseResponse,
+    CategoryResponse,
+    CreateCategoryRequest,
+    UpdateCategoryRequest,
+)
 
 router = APIRouter()
 
@@ -64,6 +79,29 @@ async def get_user_categories(
             updated_at=category.updated_at,
         )
         for category in categories
+    ]
+
+
+@router.get(path="/categories/statistics/expenses", response_model=list[CategoryExpenseResponse])
+async def get_category_expenses(
+    user_id: Annotated[str, Depends(authenticate)],
+    category_repo: Annotated[
+        ICategoryExpenseRepository,
+        Depends(CategoryExpenseRepositoryProvider.get_category_expense_repository),
+    ],
+) -> list[CategoryExpenseResponse]:
+    query = GetCategoryExpensesQuery(user_id=user_id)
+    expenses = await handle_get_category_expenses(query, category_repo)
+
+    return [
+        CategoryExpenseResponse(
+            category_id=expense.category_id,
+            category_name=expense.category_name,
+            amount=expense.total_amount,
+            transaction_count=expense.transaction_count,
+            last_updated=expense.last_updated,
+        )
+        for expense in expenses
     ]
 
 

@@ -18,6 +18,11 @@ from src.modules.budgets.application.event_handlers import (
 from src.modules.categories.api.http import router as categories_router
 from src.modules.identity.api.http import router as identity_router
 from src.modules.transactions.api.http import router as transactions_router
+from src.modules.transactions.application.event_handlers import (
+    handle_transaction_created as handle_statistics_transaction_created,
+    handle_transaction_deleted as handle_statistics_transaction_deleted,
+    handle_transaction_updated as handle_statistics_transaction_updated,
+)
 from src.modules.transactions.domain.events import (
     TransactionCreatedEvent,
     TransactionDeletedEvent,
@@ -34,6 +39,9 @@ message_bus.register(TransactionDeletedEvent, handle_transaction_deleted)
 message_bus.register(TransactionCreatedEvent, handle_account_transaction_created)
 message_bus.register(TransactionUpdatedEvent, handle_account_transaction_updated)
 message_bus.register(TransactionDeletedEvent, handle_account_transaction_deleted)
+message_bus.register(TransactionCreatedEvent, handle_statistics_transaction_created)
+message_bus.register(TransactionUpdatedEvent, handle_statistics_transaction_updated)
+message_bus.register(TransactionDeletedEvent, handle_statistics_transaction_deleted)
 
 app.include_router(identity_router, prefix="/identity", tags=["identity"])
 app.include_router(categories_router, prefix="/categories", tags=["categories"])

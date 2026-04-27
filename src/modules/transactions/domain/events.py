@@ -36,6 +36,7 @@ class TransactionUpdatedEvent:
     updated_at: datetime
     old_category_id: str | None
     old_amount: Decimal
+    old_transaction_type: TransactionType
 
 
 @dataclass(frozen=True)
