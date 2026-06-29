@@ -12,6 +12,7 @@ dependencies = [
     "fastapi>=0.123.5",
     "psycopg2>=2.9.11 ; sys_platform == 'win32'",
     "psycopg2-binary>=2.9.11 ; sys_platform == 'darwin' or sys_platform == 'linux'",
+    "pydantic[email]>=2.12.5",
     "pyjwt>=2.10.1",
     "python-dotenv>=1.2.1",
     "sqlalchemy>=2.0.44",
@@ -20,7 +21,9 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "httpx>=0.28.1",
     "mypy>=1.19.0",
+    "pyyaml>=6.0.2",
     "ruff>=0.14.7",
 ]
 
