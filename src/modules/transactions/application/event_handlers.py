@@ -11,6 +11,7 @@ from src.modules.categories.infrastructure.sqlalchemy.category_expense_repositor
     SqlAlchemyCategoryExpenseRepository,
 )
 from src.modules.categories.infrastructure.sqlalchemy.orm_models import CategoryORM
+from src.modules.categories.infrastructure.sqlalchemy.repository import SqlAlchemyCategoryRepository
 from src.modules.transactions.domain.entities import DashboardStatisticsReadModel
 from src.modules.transactions.infrastructure.sqlalchemy.statistics_repositories import (
     SqlAlchemyDashboardStatisticsRepository,
@@ -30,7 +31,8 @@ async def handle_transaction_created(event: TransactionCreatedEvent) -> None:
     async with get_session_context(async_session_maker) as session:
         # Create repositories
         dashboard_repo = SqlAlchemyDashboardStatisticsRepository(session)
-        category_repo = SqlAlchemyCategoryExpenseRepository(session)
+        category_expense_repo = SqlAlchemyCategoryExpenseRepository(session)
+        category_repo = SqlAlchemyCategoryRepository(session)
 
         # Update dashboard statistics
         dashboard_stats = await dashboard_repo.get_by_user_id(event.user_id)
@@ -41,9 +43,12 @@ async def handle_transaction_created(event: TransactionCreatedEvent) -> None:
         dashboard_stats.apply_transaction(event.transaction_type, event.amount)
         await dashboard_repo.save(dashboard_stats)
 
+        if event.category_id and not (await category_repo.get_by_id(event.category_id)):
+            return
+
         # Update category expenses if it's an expense with category
         if event.transaction_type.lower() == "expense" and event.category_id:
-            category_expense = await category_repo.get_by_user_and_category(
+            category_expense = await category_expense_repo.get_by_user_and_category(
                 event.user_id,
                 event.category_id,
             )
@@ -65,7 +70,7 @@ async def handle_transaction_created(event: TransactionCreatedEvent) -> None:
                 )
 
             category_expense.apply_transaction(event.amount)
-            await category_repo.save(category_expense)
+            await category_expense_repo.save(category_expense)
 
         await session.commit()
         logger.info(

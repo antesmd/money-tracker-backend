@@ -5,6 +5,7 @@ from decimal import Decimal
 from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
+from pydantic import NaiveDatetime
 
 from src.libs.authentication.authentication_client import authenticate
 from src.modules.transactions.application.commands import (
@@ -87,8 +88,8 @@ async def create_transaction(
 async def get_user_transactions(
     user_id: Annotated[str, Depends(authenticate)],
     unit_of_work: Annotated[ITransactionsUnitOfWork, Depends(_get_transactions_uow)],
-    limit: Annotated[int | None, Query()] = None,
-    offset: Annotated[int | None, Query()] = None,
+    limit: Annotated[int | None, Query(ge=0, le=100)] = None,
+    offset: Annotated[int | None, Query(ge=0, le=1000)] = None,
 ) -> list[TransactionResponse]:
     command = GetUserTransactionsCommand(user_id=user_id, limit=limit, offset=offset)
     transactions = await get_user_transactions_use_case(command, unit_of_work=unit_of_work)
@@ -114,8 +115,8 @@ async def get_account_transactions(
     account_id: str,
     _user_id: Annotated[str, Depends(authenticate)],
     unit_of_work: Annotated[ITransactionsUnitOfWork, Depends(_get_transactions_uow)],
-    limit: Annotated[int | None, Query()] = None,
-    offset: Annotated[int | None, Query()] = None,
+    limit: Annotated[int | None, Query(ge=0, le=100)] = None,
+    offset: Annotated[int | None, Query(ge=0, le=1000)] = None,
 ) -> list[TransactionResponse]:
     command = GetAccountTransactionsCommand(account_id=account_id, limit=limit, offset=offset)
     transactions = await get_account_transactions_use_case(command, unit_of_work=unit_of_work)
@@ -140,8 +141,8 @@ async def get_account_transactions(
 async def get_transactions_by_date_range(
     user_id: Annotated[str, Depends(authenticate)],
     unit_of_work: Annotated[ITransactionsUnitOfWork, Depends(_get_transactions_uow)],
-    start_date: Annotated[datetime, Query()],
-    end_date: Annotated[datetime, Query()],
+    start_date: Annotated[NaiveDatetime, Query()],
+    end_date: Annotated[NaiveDatetime, Query()],
 ) -> list[TransactionResponse]:
     command = GetTransactionsByDateRangeCommand(
         user_id=user_id,

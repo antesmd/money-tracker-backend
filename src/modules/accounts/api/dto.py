@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from src.modules.accounts.domain.entities import AccountType
 
@@ -11,7 +11,13 @@ from src.modules.accounts.domain.entities import AccountType
 class CreateAccountRequest(BaseModel):
     name: str
     account_type: AccountType
-    initial_balance: Decimal = Decimal("0.0")
+    initial_balance: Decimal = Field(
+        default=Decimal("0.0"),
+        decimal_places=2,
+        max_digits=10,
+        ge=Decimal("0.0"),
+        le=Decimal("1000000.0"),
+    )
 
 
 class UpdateAccountRequest(BaseModel):

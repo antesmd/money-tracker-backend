@@ -9,7 +9,7 @@ from src.modules.identity.application.commands import (
     CreateUserCommand,
     RefreshTokenCommand,
 )
-from src.modules.identity.application.exceptions import InvalidCredentialsError
+from src.modules.identity.application.exceptions import EmailAlreadyExistsError, InvalidCredentialsError
 from src.modules.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
 from src.modules.identity.application.use_cases import (
     create_user_use_case,
@@ -34,7 +34,13 @@ async def create_user(
         username=body.username,
         password=body.password,
     )
-    await create_user_use_case(command, unit_of_work=unit_of_work)
+    try:
+        await create_user_use_case(command, unit_of_work=unit_of_work)
+    except EmailAlreadyExistsError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already exists",
+        ) from exc
 
 
 @router.post(path="/auth", status_code=status.HTTP_204_NO_CONTENT)

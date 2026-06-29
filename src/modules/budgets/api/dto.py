@@ -3,19 +3,25 @@ from __future__ import annotations
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, NaiveDatetime
 
 
 class CreateBudgetRequest(BaseModel):
     category_id: str = Field(description="ID категории для бюджета")
-    amount: Decimal = Field(ge=0, description="Сумма бюджета")
-    period_start: datetime = Field(description="Начало периода")
-    period_end: datetime = Field(description="Конец периода")
+    amount: Decimal = Field(
+        ge=0,
+        description="Сумма бюджета",
+        decimal_places=2,
+        max_digits=10,
+        le=Decimal("1000000.0"),
+    )
+    period_start: NaiveDatetime = Field(description="Начало периода")
+    period_end: NaiveDatetime = Field(description="Конец периода")
 
 
 class UpdateBudgetRequest(BaseModel):
-    period_start: datetime | None = Field(None, description="Новое начало периода")
-    period_end: datetime | None = Field(None, description="Новый конец периода")
+    period_start: NaiveDatetime | None = Field(None, description="Новое начало периода")
+    period_end: NaiveDatetime | None = Field(None, description="Новый конец периода")
 
 
 class BudgetResponse(BaseModel):

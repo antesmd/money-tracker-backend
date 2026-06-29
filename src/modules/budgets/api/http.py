@@ -92,7 +92,7 @@ async def create_budget_endpoint(
 async def get_budgets_endpoint(
     user_id: Annotated[str, Depends(authenticate)],
     uow: Annotated[IBudgetsUnitOfWork, Depends(get_budgets_uow)],
-    skip: Annotated[int, Query(ge=0)] = 0,
+    skip: Annotated[int, Query(ge=0, le=1000)] = 0,
     limit: Annotated[int, Query(ge=1, le=100)] = 100,
 ) -> list[BudgetResponse]:
     budgets = await get_user_budgets(
@@ -220,7 +220,7 @@ async def get_budgets_read_model_endpoint(
         SqlAlchemyBudgetReadModelRepository,
         Depends(get_budget_read_model_repository),
     ],
-    skip: Annotated[int, Query(ge=0)] = 0,
+    skip: Annotated[int, Query(ge=0, le=1000)] = 0,
     limit: Annotated[int, Query(ge=1, le=100)] = 100,
 ) -> list[BudgetReadModelResponse]:
     query = GetUserBudgetsReadModelQuery(

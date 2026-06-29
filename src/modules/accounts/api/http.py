@@ -145,7 +145,7 @@ async def get_accounts_read_model_endpoint(
         IAccountReadModelRepository,
         Depends(read_model_repository_provider.get_account_read_model_repository),
     ],
-    skip: Annotated[int, Query(ge=0)] = 0,
+    skip: Annotated[int, Query(ge=0, le=1000)] = 0,
     limit: Annotated[int, Query(ge=1, le=100)] = 100,
 ) -> list[AccountReadModelResponse]:
     query = GetUserAccountsReadModelQuery(

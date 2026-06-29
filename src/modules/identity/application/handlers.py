@@ -3,15 +3,18 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
+from src.libs.utils.hashing import hash_with_bcrypt, verify_bcrypt_hash
 from src.modules.identity.application.commands import (
     AuthenticateUserCommand,
     CreateUserCommand,
     RefreshTokenCommand,
 )
-from src.modules.identity.application.exceptions import InvalidCredentialsError
+from src.modules.identity.application.exceptions import (
+    EmailAlreadyExistsError,
+    InvalidCredentialsError,
+)
 from src.modules.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
 from src.modules.identity.domain.entities import User
-from src.libs.utils.hashing import hash_with_bcrypt, verify_bcrypt_hash
 
 if TYPE_CHECKING:
     from src.modules.identity.application.interfaces.unit_of_work import IIdentityUnitOfWork
@@ -25,6 +28,9 @@ async def handle_create_user(
     command: CreateUserCommand,
     unit_of_work: IIdentityUnitOfWork,
 ) -> User:
+    if await unit_of_work.users.get_by_email(command.email):
+        raise EmailAlreadyExistsError
+
     user = User(
         user_id=str(uuid4()),
         username=command.username,
