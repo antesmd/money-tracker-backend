@@ -1,0 +1,266 @@
+# Декларативный каталог API-эндпоинтов для фаззинга.
+# path_params / query_params / fuzz_fields — списки полей, подставляемых из wordlist.
+
+endpoints:
+  # --- Identity (без auth) ---
+  - id: identity.register
+    method: POST
+    path: /identity/users
+    auth: none
+    body:
+      email: "{{email}}"
+      username: "{{username}}"
+      password: "{{password}}"
+    fuzz_fields: [email, username, password]
+
+  - id: identity.login
+    method: POST
+    path: /identity/auth
+    auth: none
+    body:
+      email: "{{email}}"
+      password: "{{password}}"
+    fuzz_fields: [email, password]
+
+  - id: identity.refresh
+    method: PATCH
+    path: /identity/auth
+    auth: refresh
+    fuzz_cookies: [refresh_token]
+
+  - id: identity.logout
+    method: DELETE
+    path: /identity/auth
+    auth: none
+
+  # --- Accounts ---
+  - id: accounts.create
+    method: POST
+    path: /accounts/accounts
+    auth: access
+    body:
+      name: "Fuzz Account"
+      account_type: cash
+      initial_balance: "100.00"
+    fuzz_fields: [name, account_type, initial_balance]
+
+  - id: accounts.list
+    method: GET
+    path: /accounts/accounts
+    auth: access
+
+  - id: accounts.update
+    method: PATCH
+    path: /accounts/accounts/{account_id}
+    auth: access
+    path_params:
+      account_id: "{{account_id}}"
+    body:
+      name: "Updated Account"
+      account_type: card
+    fuzz_fields: [name, account_type]
+    fuzz_path_params: [account_id]
+
+  - id: accounts.delete
+    method: DELETE
+    path: /accounts/accounts/{account_id}
+    auth: access
+    path_params:
+      account_id: "{{account_id}}"
+    fuzz_path_params: [account_id]
+
+  - id: accounts.read_model.list
+    method: GET
+    path: /accounts/accounts/read-model
+    auth: access
+    query_params:
+      skip: "0"
+      limit: "10"
+    fuzz_query_params: [skip, limit]
+
+  - id: accounts.read_model.by_id
+    method: GET
+    path: /accounts/accounts/read-model/{account_id}
+    auth: access
+    path_params:
+      account_id: "{{account_id}}"
+    fuzz_path_params: [account_id]
+
+  # --- Categories ---
+  - id: categories.create
+    method: POST
+    path: /categories/categories
+    auth: access
+    body:
+      name: "Fuzz Category"
+    fuzz_fields: [name]
+
+  - id: categories.list
+    method: GET
+    path: /categories/categories
+    auth: access
+
+  - id: categories.expenses
+    method: GET
+    path: /categories/categories/statistics/expenses
+    auth: access
+
+  - id: categories.update
+    method: PATCH
+    path: /categories/categories/{category_id}
+    auth: access
+    path_params:
+      category_id: "{{category_id}}"
+    body:
+      name: "Updated Category"
+    fuzz_fields: [name]
+    fuzz_path_params: [category_id]
+
+  - id: categories.delete
+    method: DELETE
+    path: /categories/categories/{category_id}
+    auth: access
+    path_params:
+      category_id: "{{category_id}}"
+    fuzz_path_params: [category_id]
+
+  # --- Transactions ---
+  - id: transactions.create
+    method: POST
+    path: /transactions/transactions
+    auth: access
+    body:
+      account_id: "{{account_id}}"
+      category_id: "{{category_id}}"
+      transaction_type: expense
+      amount: "50.00"
+      description: "Fuzz transaction"
+      date: "2025-01-15T12:00:00"
+    fuzz_fields: [account_id, category_id, transaction_type, amount, description, date]
+
+  - id: transactions.list
+    method: GET
+    path: /transactions/transactions
+    auth: access
+    query_params:
+      limit: "10"
+      offset: "0"
+    fuzz_query_params: [limit, offset]
+
+  - id: transactions.by_account
+    method: GET
+    path: /transactions/accounts/{account_id}/transactions
+    auth: access
+    path_params:
+      account_id: "{{account_id}}"
+    query_params:
+      limit: "10"
+      offset: "0"
+    fuzz_path_params: [account_id]
+    fuzz_query_params: [limit, offset]
+
+  - id: transactions.date_range
+    method: GET
+    path: /transactions/transactions/date-range
+    auth: access
+    query_params:
+      start_date: "2025-01-01T00:00:00"
+      end_date: "2025-12-31T23:59:59"
+    fuzz_query_params: [start_date, end_date]
+
+  - id: transactions.update
+    method: PATCH
+    path: /transactions/transactions/{transaction_id}
+    auth: access
+    path_params:
+      transaction_id: "{{transaction_id}}"
+    body:
+      account_id: "{{account_id}}"
+      category_id: "{{category_id}}"
+      transaction_type: income
+      amount: "25.00"
+      description: "Updated"
+      date: "2025-02-01T10:00:00"
+    fuzz_fields: [account_id, category_id, transaction_type, amount, description, date]
+    fuzz_path_params: [transaction_id]
+
+  - id: transactions.dashboard
+    method: GET
+    path: /transactions/statistics/dashboard
+    auth: access
+
+  - id: transactions.delete
+    method: DELETE
+    path: /transactions/transactions/{transaction_id}
+    auth: access
+    path_params:
+      transaction_id: "{{transaction_id}}"
+    fuzz_path_params: [transaction_id]
+
+  # --- Budgets ---
+  - id: budgets.create
+    method: POST
+    path: /budgets/budgets
+    auth: access
+    body:
+      category_id: "{{category_id}}"
+      amount: "1000.00"
+      period_start: "2025-01-01T00:00:00"
+      period_end: "2025-12-31T23:59:59"
+    fuzz_fields: [category_id, amount, period_start, period_end]
+
+  - id: budgets.list
+    method: GET
+    path: /budgets/budgets
+    auth: access
+    query_params:
+      skip: "0"
+      limit: "10"
+    fuzz_query_params: [skip, limit]
+
+  - id: budgets.active
+    method: GET
+    path: /budgets/budgets/active
+    auth: access
+
+  - id: budgets.update
+    method: PATCH
+    path: /budgets/budgets/{budget_id}
+    auth: access
+    path_params:
+      budget_id: "{{budget_id}}"
+    body:
+      period_start: "2025-06-01T00:00:00"
+      period_end: "2025-06-30T23:59:59"
+    fuzz_fields: [period_start, period_end]
+    fuzz_path_params: [budget_id]
+
+  - id: budgets.delete
+    method: DELETE
+    path: /budgets/budgets/{budget_id}
+    auth: access
+    path_params:
+      budget_id: "{{budget_id}}"
+    fuzz_path_params: [budget_id]
+
+  - id: budgets.read_model.list
+    method: GET
+    path: /budgets/budgets/read-model
+    auth: access
+    query_params:
+      skip: "0"
+      limit: "10"
+    fuzz_query_params: [skip, limit]
+
+  - id: budgets.read_model.active
+    method: GET
+    path: /budgets/budgets/read-model/active
+    auth: access
+
+  - id: budgets.read_model.by_id
+    method: GET
+    path: /budgets/budgets/read-model/{budget_id}
+    auth: access
+    path_params:
+      budget_id: "{{budget_id}}"
+    fuzz_path_params: [budget_id]

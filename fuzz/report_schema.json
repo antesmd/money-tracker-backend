@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "money-tracker-fuzz-report/1.0",
+  "title": "Money Tracker API Fuzz Report",
+  "type": "object",
+  "required": ["metadata", "summary", "findings", "coverage"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["schema_version", "run_id", "started_at", "finished_at", "target", "config_path", "endpoints_path"],
+      "properties": {
+        "schema_version": { "type": "string", "const": "1.0" },
+        "run_id": { "type": "string", "format": "uuid" },
+        "started_at": { "type": "string", "format": "date-time" },
+        "finished_at": { "type": "string", "format": "date-time" },
+        "duration_seconds": { "type": "number", "minimum": 0 },
+        "target": { "type": "string", "format": "uri" },
+        "config_path": { "type": "string" },
+        "endpoints_path": { "type": "string" },
+        "payload_sets": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total_requests", "endpoints_tested", "findings_by_severity", "responses_by_status"],
+      "properties": {
+        "total_requests": { "type": "integer", "minimum": 0 },
+        "endpoints_tested": { "type": "integer", "minimum": 0 },
+        "findings_by_severity": {
+          "type": "object",
+          "properties": {
+            "critical": { "type": "integer" },
+            "high": { "type": "integer" },
+            "medium": { "type": "integer" },
+            "low": { "type": "integer" },
+            "info": { "type": "integer" }
+          }
+        },
+        "responses_by_status": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        }
+      }
+    },
+    "coverage": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["endpoint_id", "method", "path", "requests_sent"],
+        "properties": {
+          "endpoint_id": { "type": "string" },
+          "method": { "type": "string" },
+          "path": { "type": "string" },
+          "requests_sent": { "type": "integer" }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "severity", "classification", "endpoint_id", "method", "path", "payload_category", "payload", "response"],
+        "properties": {
+          "id": { "type": "string" },
+          "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+          "classification": {
+            "enum": [
+              "server_error",
+              "unexpected_success",
+              "auth_bypass",
+              "payload_reflected",
+              "timeout",
+              "expected_rejection",
+              "anomaly"
+            ]
+          },
+          "endpoint_id": { "type": "string" },
+          "method": { "type": "string" },
+          "path": { "type": "string" },
+          "target_field": { "type": ["string", "null"] },
+          "payload_category": { "type": "string" },
+          "payload": { "type": "string" },
+          "request": {
+            "type": "object",
+            "properties": {
+              "url": { "type": "string" },
+              "headers": { "type": "object" },
+              "body_preview": { "type": ["string", "null"] }
+            }
+          },
+          "response": {
+            "type": "object",
+            "required": ["status_code"],
+            "properties": {
+              "status_code": { "type": "integer" },
+              "elapsed_ms": { "type": "number" },
+              "body_preview": { "type": ["string", "null"] }
+            }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+# Конфигурация фаззинг-тестирования API money-tracker backend.
+# Запуск: python fuzz/run_fuzz.py --config fuzz/config.yaml
+
+target:
+  base_url: "http://localhost:8000"
+  openapi_url: "/openapi.json"
+  timeout_seconds: 10
+  max_response_body_chars: 2000
+
+auth:
+  # Уникальный пользователь создаётся автоматически перед прогоном.
+  # Можно задать фиксированные credentials для повторного прогона на существующем пользователе.
+  use_existing_user: true
+  email: "fuzz6@example.com"
+  password: "FuzzTestPass123!"
+  username_prefix: "fuzz_user"
+
+fuzz:
+  # Категории payload-ов из fuzz/payloads/
+  payload_sets:
+    - common
+    - sql_injection
+    - path_traversal
+    - xss
+  # Дополнительные мутации JSON-тела
+  include_json_mutations: true
+  # Фаззинг path/query параметров
+  include_path_params: true
+  include_query_params: true
+  # Параллельность (1 = последовательно, безопаснее для локального сервера)
+  concurrency: 1
+  # Задержка между запросами в мс (0 = без задержки)
+  delay_ms: 0
+
+report:
+  output_dir: "fuzz/reports"
+  include_passed: false
+  body_preview_chars: 500
+  schema_version: "1.0"
+
+expected_status:
+  # Статусы, считающиеся корректным отклонением входных данных
+  rejection: [400, 401, 403, 404, 422]
+  # Статусы успешной обработки (зависят от endpoint)
+  success: [200, 201, 204]
