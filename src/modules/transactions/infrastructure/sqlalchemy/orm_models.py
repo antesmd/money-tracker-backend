@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import TypedDict, Unpack
 
-from sqlalchemy import DateTime, Enum, Integer, MetaData, Numeric, String, Text
+from sqlalchemy import DateTime, Enum, MetaData, Numeric, String, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from src.modules.transactions.domain.entities import TransactionType

@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
+from src.libs.utils import DateTimeUtils
 from src.modules.categories.application.exceptions import CategoryNotFoundError
 from src.modules.categories.domain.entities import Category
-from src.libs.utils import DateTimeUtils
 
 if TYPE_CHECKING:
     from src.modules.categories.application.commands import (

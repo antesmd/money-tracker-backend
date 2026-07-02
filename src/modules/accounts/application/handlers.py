@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
+from src.libs.utils import DateTimeUtils
 from src.modules.accounts.application.exceptions import AccountNotFoundError
 from src.modules.accounts.domain.entities import Account
-from src.libs.utils import DateTimeUtils
 
 if TYPE_CHECKING:
     from src.modules.accounts.application.commands import (

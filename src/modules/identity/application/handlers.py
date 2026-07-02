@@ -52,10 +52,18 @@ async def handle_authenticate_user(
     if not user or not verify_bcrypt_hash(command.password, user.hashed_password):
         raise InvalidCredentialsError
 
-    access_token = token_service.create_access_token(payload={"user_id": user.user_id})
-    refresh_token = token_service.create_refresh_token(payload={"user_id": user.user_id})
+    access_token = token_service.create_access_token(
+        payload={"user_id": user.user_id, "role": user.role.value},
+    )
+    refresh_token = token_service.create_refresh_token(
+        payload={"user_id": user.user_id, "role": user.role.value},
+    )
 
     return access_token, refresh_token
+
+
+async def handle_list_users(unit_of_work: IIdentityUnitOfWork) -> list[User]:
+    return await unit_of_work.users.list_all()
 
 
 async def handle_refresh_token(
@@ -72,7 +80,11 @@ async def handle_refresh_token(
     if not user:
         raise InvalidCredentialsError
 
-    new_access_token = token_service.create_access_token(payload={"user_id": user.user_id})
-    new_refresh_token = token_service.create_refresh_token(payload={"user_id": user.user_id})
+    new_access_token = token_service.create_access_token(
+        payload={"user_id": user.user_id, "role": user.role.value},
+    )
+    new_refresh_token = token_service.create_refresh_token(
+        payload={"user_id": user.user_id, "role": user.role.value},
+    )
 
     return new_access_token, new_refresh_token

@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-async def handle_account_created(account: Account, initial_balance: Decimal = Decimal("0")) -> None:
+async def handle_account_created(account: Account, initial_balance: Decimal = Decimal(0)) -> None:
     async with get_session_context(async_session_maker) as session:
         repository = SqlAlchemyAccountReadModelRepository(session)
         read_model = AccountReadModel.from_account(account, initial_balance=initial_balance)

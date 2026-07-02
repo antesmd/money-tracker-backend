@@ -19,6 +19,7 @@ from src.libs.utils.jwt.implementations.pyjwt.pyjwt_implementation import PyJWT
 
 class TokenPayload(TypedDict):
     user_id: str
+    role: str
 
 
 class TokenService:

@@ -49,7 +49,7 @@ async def handle_transaction_created(event: TransactionCreatedEvent) -> None:
 
             logger.info(
                 f"Updated read model for budget {read_model.budget_id} "
-                f"after transaction {event.transaction_id}"
+                f"after transaction {event.transaction_id}",
             )
 
 async def handle_transaction_updated(event: TransactionUpdatedEvent) -> None:
@@ -114,7 +114,7 @@ async def handle_transaction_deleted(event: TransactionDeletedEvent) -> None:
 
             logger.info(
                 f"Reversed transaction {event.transaction_id} "
-                f"from read model {read_model.budget_id}"
+                f"from read model {read_model.budget_id}",
             )
 
 async def handle_budget_updated(budget: Budget) -> None:

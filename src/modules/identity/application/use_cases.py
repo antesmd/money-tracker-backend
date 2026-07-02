@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from src.modules.identity.application.handlers import (
     handle_authenticate_user,
     handle_create_user,
+    handle_list_users,
     handle_refresh_token,
 )
 
@@ -36,6 +37,10 @@ async def user_login_use_case(
         unit_of_work=unit_of_work,
         token_service=token_service,
     )
+
+
+async def list_users_use_case(unit_of_work: IIdentityUnitOfWork) -> list[User]:
+    return await handle_list_users(unit_of_work)
 
 
 async def refresh_token_use_case(

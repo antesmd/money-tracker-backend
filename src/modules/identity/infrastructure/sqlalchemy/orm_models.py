@@ -16,6 +16,7 @@ class UserORMConstructorFields(TypedDict):
     email: str
     username: str
     hashed_password: str
+    role: str
     created_at: datetime
 
 
@@ -41,6 +42,11 @@ class UserORM(Base):
     hashed_password: Mapped[str] = mapped_column(
         String,
         nullable=False,
+    )
+    role: Mapped[str] = mapped_column(
+        String,
+        nullable=False,
+        default="user",
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,

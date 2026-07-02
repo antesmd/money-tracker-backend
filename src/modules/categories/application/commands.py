@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import NamedTuple
 
-from src.modules.categories.domain.entities import TransactionType
-
 
 class CreateCategoryCommand(NamedTuple):
     user_id: str

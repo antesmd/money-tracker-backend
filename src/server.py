@@ -1,6 +1,12 @@
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
+from typing import TYPE_CHECKING
+
 from fastapi import FastAPI
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
 
 from src.libs.message_bus import global_message_bus
 from src.modules.accounts.api.http import router as accounts_router
@@ -17,6 +23,7 @@ from src.modules.budgets.application.event_handlers import (
 )
 from src.modules.categories.api.http import router as categories_router
 from src.modules.identity.api.http import router as identity_router
+from src.modules.identity.infrastructure.seed import seed_admin_user
 from src.modules.transactions.api.http import router as transactions_router
 from src.modules.transactions.application.event_handlers import (
     handle_transaction_created as handle_statistics_transaction_created,
@@ -29,7 +36,14 @@ from src.modules.transactions.domain.events import (
     TransactionUpdatedEvent,
 )
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI) -> AsyncGenerator[None]:
+    await seed_admin_user()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 message_bus = global_message_bus
 

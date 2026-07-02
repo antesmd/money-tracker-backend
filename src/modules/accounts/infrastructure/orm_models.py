@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import DateTime, Integer, DECIMAL, ForeignKey
+from sqlalchemy import DECIMAL, DateTime, ForeignKey, Integer
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from datetime import datetime
 
 
 class Base(DeclarativeBase):

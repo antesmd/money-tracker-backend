@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, final
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from src.modules.identity.application.interfaces.repositories import IUserRepository
 from src.modules.identity.domain.entities import User
+from src.modules.identity.domain.roles import Role
 from src.modules.identity.infrastructure.sqlalchemy.orm_models import UserORM
 
 if TYPE_CHECKING:
@@ -25,6 +26,7 @@ class SqlAlchemyUserRepository(IUserRepository):
             email=user.email,
             username=user.username,
             hashed_password=user.hashed_password,
+            role=user.role.value,
             created_at=user.created_at,
         )
         self.__session.add(orm)
@@ -40,6 +42,7 @@ class SqlAlchemyUserRepository(IUserRepository):
             email=user.email,
             username=user.username,
             hashed_password=user.hashed_password,
+            role=Role(user.role),
             created_at=user.created_at,
         )
 
@@ -54,5 +57,27 @@ class SqlAlchemyUserRepository(IUserRepository):
             email=user.email,
             username=user.username,
             hashed_password=user.hashed_password,
+            role=Role(user.role),
             created_at=user.created_at,
         )
+
+    async def list_all(self) -> list[User]:
+        query = select(UserORM)
+        result = await self.__session.execute(query)
+        orms = result.scalars().all()
+
+        return [
+            User(
+                user_id=orm.user_id,
+                email=orm.email,
+                username=orm.username,
+                hashed_password=orm.hashed_password,
+                role=Role(orm.role),
+                created_at=orm.created_at,
+            )
+            for orm in orms
+        ]
+
+    async def set_role(self, user_id: str, role: Role) -> None:
+        stmt = update(UserORM).where(UserORM.user_id == user_id).values(role=role.value)
+        await self.__session.execute(stmt)

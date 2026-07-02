@@ -4,6 +4,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
+from src.modules.identity.domain.roles import Role
+
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
@@ -13,6 +15,7 @@ class User:
     email: str
     username: str
     hashed_password: str
+    role: Role = Role.USER
     created_at: datetime = field(default_factory=datetime.utcnow)
 
     def to_event(self) -> Mapping[str, Any]:
