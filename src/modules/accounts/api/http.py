@@ -91,12 +91,13 @@ async def get_user_accounts(
 @router.patch(path="/accounts/{account_id}")
 async def update_account(
     account_id: str,
-    _user_id: Annotated[str, Depends(authenticate)],
+    user_id: Annotated[str, Depends(authenticate)],
     body: Annotated[UpdateAccountRequest, Body()],
     unit_of_work: Annotated[IAccountsUnitOfWork, Depends(get_accounts_uow)],
 ) -> AccountResponse:
     command = UpdateAccountCommand(
         account_id=account_id,
+        user_id=user_id,
         name=body.name,
         account_type=body.account_type,
     )
@@ -121,10 +122,10 @@ async def update_account(
 @router.delete(path="/accounts/{account_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_account(
     account_id: str,
-    _user_id: Annotated[str, Depends(authenticate)],
+    user_id: Annotated[str, Depends(authenticate)],
     unit_of_work: Annotated[IAccountsUnitOfWork, Depends(get_accounts_uow)],
 ) -> None:
-    command = DeleteAccountCommand(account_id=account_id)
+    command = DeleteAccountCommand(account_id=account_id, user_id=user_id)
     try:
         await delete_account_use_case(command, unit_of_work=unit_of_work)
     except AccountNotFoundError as exc:

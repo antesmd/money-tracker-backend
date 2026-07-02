@@ -8,6 +8,14 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from pydantic import NaiveDatetime
 
 from src.libs.authentication.authentication_client import authenticate
+from src.modules.accounts.application.interfaces.unit_of_work import IAccountsUnitOfWork
+from src.modules.accounts.infrastructure.dependency_injection.uow.accounts_uow_provider import (
+    get_accounts_uow,
+)
+from src.modules.categories.application.interfaces.unit_of_work import ICategoriesUnitOfWork
+from src.modules.categories.infrastructure.dependency_injection.uow.categories_uow_provider import (
+    get_categories_uow,
+)
 from src.modules.transactions.application.commands import (
     CreateTransactionCommand,
     DeleteTransactionCommand,
@@ -47,6 +55,7 @@ from .dto import (
     TransactionTypeDistribution,
     UpdateTransactionRequest,
 )
+from .ownership import ensure_account_and_category_ownership
 
 router = APIRouter()
 
@@ -59,7 +68,16 @@ async def create_transaction(
     user_id: Annotated[str, Depends(authenticate)],
     body: Annotated[CreateTransactionRequest, Body()],
     unit_of_work: Annotated[ITransactionsUnitOfWork, Depends(_get_transactions_uow)],
+    accounts_uow: Annotated[IAccountsUnitOfWork, Depends(get_accounts_uow)],
+    categories_uow: Annotated[ICategoriesUnitOfWork, Depends(get_categories_uow)],
 ) -> TransactionResponse:
+    await ensure_account_and_category_ownership(
+        user_id=user_id,
+        account_id=body.account_id,
+        category_id=body.category_id,
+        accounts_uow=accounts_uow,
+        categories_uow=categories_uow,
+    )
     command = CreateTransactionCommand(
         user_id=user_id,
         account_id=body.account_id,
@@ -113,12 +131,17 @@ async def get_user_transactions(
 @router.get(path="/accounts/{account_id}/transactions")
 async def get_account_transactions(
     account_id: str,
-    _user_id: Annotated[str, Depends(authenticate)],
+    user_id: Annotated[str, Depends(authenticate)],
     unit_of_work: Annotated[ITransactionsUnitOfWork, Depends(_get_transactions_uow)],
     limit: Annotated[int | None, Query(ge=0, le=100)] = None,
     offset: Annotated[int | None, Query(ge=0, le=1000)] = None,
 ) -> list[TransactionResponse]:
-    command = GetAccountTransactionsCommand(account_id=account_id, limit=limit, offset=offset)
+    command = GetAccountTransactionsCommand(
+        account_id=account_id,
+        user_id=user_id,
+        limit=limit,
+        offset=offset,
+    )
     transactions = await get_account_transactions_use_case(command, unit_of_work=unit_of_work)
     return [
         TransactionResponse(
@@ -170,12 +193,22 @@ async def get_transactions_by_date_range(
 @router.patch(path="/transactions/{transaction_id}")
 async def update_transaction(
     transaction_id: str,
-    _user_id: Annotated[str, Depends(authenticate)],
+    user_id: Annotated[str, Depends(authenticate)],
     body: Annotated[UpdateTransactionRequest, Body()],
     unit_of_work: Annotated[ITransactionsUnitOfWork, Depends(_get_transactions_uow)],
+    accounts_uow: Annotated[IAccountsUnitOfWork, Depends(get_accounts_uow)],
+    categories_uow: Annotated[ICategoriesUnitOfWork, Depends(get_categories_uow)],
 ) -> TransactionResponse:
+    await ensure_account_and_category_ownership(
+        user_id=user_id,
+        account_id=body.account_id,
+        category_id=body.category_id,
+        accounts_uow=accounts_uow,
+        categories_uow=categories_uow,
+    )
     command = UpdateTransactionCommand(
         transaction_id=transaction_id,
+        user_id=user_id,
         account_id=body.account_id,
         category_id=body.category_id,
         transaction_type=body.transaction_type,
@@ -230,10 +263,10 @@ async def get_dashboard_statistics_endpoint(
 @router.delete(path="/transactions/{transaction_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_transaction(
     transaction_id: str,
-    _user_id: Annotated[str, Depends(authenticate)],
+    user_id: Annotated[str, Depends(authenticate)],
     unit_of_work: Annotated[ITransactionsUnitOfWork, Depends(get_transactions_uow)],
 ) -> None:
-    command = DeleteTransactionCommand(transaction_id=transaction_id)
+    command = DeleteTransactionCommand(transaction_id=transaction_id, user_id=user_id)
     try:
         await delete_transaction_use_case(command, unit_of_work=unit_of_work)
     except TransactionNotFoundError as exc:

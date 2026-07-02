@@ -12,11 +12,13 @@ class CreateCategoryCommand(NamedTuple):
 
 class UpdateCategoryCommand(NamedTuple):
     category_id: str
+    user_id: str
     name: str
 
 
 class DeleteCategoryCommand(NamedTuple):
     category_id: str
+    user_id: str
 
 
 class GetUserCategoriesCommand(NamedTuple):

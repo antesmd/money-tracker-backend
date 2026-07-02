@@ -108,12 +108,13 @@ async def get_category_expenses(
 @router.patch(path="/categories/{category_id}")
 async def update_category(
     category_id: str,
-    _user_id: Annotated[str, Depends(authenticate)],
+    user_id: Annotated[str, Depends(authenticate)],
     body: Annotated[UpdateCategoryRequest, Body()],
     unit_of_work: Annotated[ICategoriesUnitOfWork, Depends(get_categories_uow)],
 ) -> CategoryResponse:
     command = UpdateCategoryCommand(
         category_id=category_id,
+        user_id=user_id,
         name=body.name,
     )
     try:
@@ -136,10 +137,10 @@ async def update_category(
 @router.delete(path="/categories/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_category(
     category_id: str,
-    _user_id: Annotated[str, Depends(authenticate)],
+    user_id: Annotated[str, Depends(authenticate)],
     unit_of_work: Annotated[ICategoriesUnitOfWork, Depends(get_categories_uow)],
 ) -> None:
-    command = DeleteCategoryCommand(category_id=category_id)
+    command = DeleteCategoryCommand(category_id=category_id, user_id=user_id)
     try:
         await delete_category_use_case(command, unit_of_work=unit_of_work)
     except CategoryNotFoundError as exc:

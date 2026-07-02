@@ -65,7 +65,7 @@ async def handle_update_transaction(
     unit_of_work: ITransactionsUnitOfWork,
 ) -> Transaction:
     transaction = await unit_of_work.transactions.get_by_id(command.transaction_id)
-    if not transaction:
+    if not transaction or transaction.user_id != command.user_id:
         raise TransactionNotFoundError
 
     old_category_id = transaction.category_id
@@ -106,7 +106,7 @@ async def handle_delete_transaction(
     unit_of_work: ITransactionsUnitOfWork,
 ) -> None:
     transaction = await unit_of_work.transactions.get_by_id(command.transaction_id)
-    if not transaction:
+    if not transaction or transaction.user_id != command.user_id:
         raise TransactionNotFoundError
 
     event = TransactionDeletedEvent(
@@ -140,11 +140,12 @@ async def handle_get_account_transactions(
     command: GetAccountTransactionsCommand,
     unit_of_work: ITransactionsUnitOfWork,
 ) -> list[Transaction]:
-    return await unit_of_work.transactions.get_by_account_id(
+    transactions = await unit_of_work.transactions.get_by_account_id(
         command.account_id,
         limit=command.limit,
         offset=command.offset,
     )
+    return [t for t in transactions if t.user_id == command.user_id]
 
 
 async def handle_get_transactions_by_date_range(

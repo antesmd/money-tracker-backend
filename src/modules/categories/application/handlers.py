@@ -36,7 +36,7 @@ async def handle_update_category(
     unit_of_work: ICategoriesUnitOfWork,
 ) -> Category:
     category = await unit_of_work.categories.get_by_id(command.category_id)
-    if not category:
+    if not category or category.user_id != command.user_id:
         raise CategoryNotFoundError
 
     category.name = command.name
@@ -51,7 +51,7 @@ async def handle_delete_category(
     unit_of_work: ICategoriesUnitOfWork,
 ) -> None:
     category = await unit_of_work.categories.get_by_id(command.category_id)
-    if not category:
+    if not category or category.user_id != command.user_id:
         raise CategoryNotFoundError
 
     await unit_of_work.categories.delete(command.category_id)

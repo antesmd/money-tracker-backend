@@ -17,12 +17,14 @@ class CreateAccountCommand(NamedTuple):
 
 class UpdateAccountCommand(NamedTuple):
     account_id: str
+    user_id: str
     name: str
     account_type: AccountType
 
 
 class DeleteAccountCommand(NamedTuple):
     account_id: str
+    user_id: str
 
 
 class GetUserAccountsCommand(NamedTuple):

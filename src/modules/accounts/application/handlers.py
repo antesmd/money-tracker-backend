@@ -37,7 +37,7 @@ async def handle_update_account(
     unit_of_work: IAccountsUnitOfWork,
 ) -> Account:
     account = await unit_of_work.accounts.get_by_id(command.account_id)
-    if not account:
+    if not account or account.user_id != command.user_id:
         raise AccountNotFoundError
 
     account.name = command.name
@@ -53,7 +53,7 @@ async def handle_delete_account(
     unit_of_work: IAccountsUnitOfWork,
 ) -> None:
     account = await unit_of_work.accounts.get_by_id(command.account_id)
-    if not account:
+    if not account or account.user_id != command.user_id:
         raise AccountNotFoundError
 
     await unit_of_work.accounts.delete(command.account_id)

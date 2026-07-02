@@ -21,6 +21,7 @@ class CreateTransactionCommand(NamedTuple):
 
 class UpdateTransactionCommand(NamedTuple):
     transaction_id: str
+    user_id: str
     account_id: str
     category_id: str | None
     transaction_type: TransactionType
@@ -31,6 +32,7 @@ class UpdateTransactionCommand(NamedTuple):
 
 class DeleteTransactionCommand(NamedTuple):
     transaction_id: str
+    user_id: str
 
 
 class GetUserTransactionsCommand(NamedTuple):
@@ -41,6 +43,7 @@ class GetUserTransactionsCommand(NamedTuple):
 
 class GetAccountTransactionsCommand(NamedTuple):
     account_id: str
+    user_id: str
     limit: int | None = None
     offset: int | None = None
 
